@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+   <head>
+   <title>pyChart Survey System :: Surveys</title>
+   </head>
+   <body>
+       {% if surveys %}
+       <table border="1px">
+        <tr><th>ID: </th><th>Name: </th><th>Course: </th><th>State (1=Active): </th></tr>
+       {% for survey in surveys %}
+       <tr><td>{{survey[0]}}</td><td>{{survey[1]}}</td><td>{{survey[2]}}</td><td>{{survey[3]}}</td></tr>
+      {% endfor %}
+        </table>
+      {%else%}
+      No surveys. Please create a survey first.
+      {% endif %}
+   </body>
+</html>

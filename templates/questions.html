@@ -6,8 +6,9 @@
    <body>
        {% if questions %}
        <table border="1px">
+        <tr><th>Question: </th><th>Response1: </th><th>Response2: </th><th>Response3: </th><th>Response4: </th><th>Response5: </th></tr>
        {% for question in questions %}
-       <tr><td>{{question[0]}}</td><td>{{question[1]}}</td><td>{{question[2]}}</td><td>{{question[3]}}</td><td>{{question[4]}}</td></tr>
+       <tr><td>{{question[0]}}</td><td>{{question[1]}}</td><td>{{question[2]}}</td><td>{{question[3]}}</td><td>{{question[4]}}</td><td>{{question[5]}}</td></tr>
       {% endfor %}
         </table>
       {%else%}

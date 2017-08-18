@@ -64,6 +64,32 @@ def addQuestion():
 
     return render_template("addQuestion.html")
 
+@app.route("/surveys")
+def surveys():
+    if not session['logged_in']:
+        return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
+
+    surveys = []
+
+    with open('surveys.csv','r') as csv_in:
+      reader = csv.reader(csv_in)
+      for row in reader:
+          surveys.append(row)
+
+    return render_template("surveys.html", surveys=surveys)
+
+@app.route("/survey/<id>")
+def survey(id):
+
+    survey = []
+
+    with open('surveys/' + id + '.csv','r') as csv_in:
+      reader = csv.reader(csv_in)
+      for row in reader:
+          survey.append(row)
+
+
+    return render_template("survey.html", survey=survey)
 
 @app.route("/survey/create", methods=["GET", "POST"])
 def createSurvey():
@@ -79,7 +105,8 @@ def createSurvey():
         surveyID =  str(int(time.time()))
         with open('surveys/' +  surveyID + '.csv','w') as csv_out:
             writer = csv.writer(csv_out)
-            writer.writerow([survey_name, course, questions])
+            writer.writerow([survey_name, course])
+            writer.writerow(questions)
 
         with open('surveys.csv','a') as csv_out:
             writer = csv.writer(csv_out)
