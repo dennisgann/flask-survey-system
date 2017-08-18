@@ -1,3 +1,10 @@
+#Project
+surveys.csv
+questions.csv
+surveys/*
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
