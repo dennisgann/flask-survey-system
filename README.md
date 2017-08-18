@@ -1,2 +1,5 @@
-# assignment-1-starter
-Starter code for assignment 1
+# pyChart Survey System
+Frank Foo, Dennis Gann, Charmaine Leung, Nicholas Wu
+
+COMP1531 17s2 Group Project
+Tutorial H13A
