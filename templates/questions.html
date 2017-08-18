@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+   <head>
+   <title>pyChart Survey System :: Question pool</title>
+   </head>
+   <body>
+       {% if questions %}
+       <table border="1px">
+       {% for question in questions %}
+       <tr><td>{{question[0]}}</td><td>{{question[1]}}</td><td>{{question[2]}}</td><td>{{question[3]}}</td><td>{{question[4]}}</td></tr>
+      {% endfor %}
+        </table>
+      {%else%}
+      No questions in pool
+      {% endif %}
+   </body>
+   </html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+   <head>
+   <title>pyChart Survey System :: Create Survey</title>
+   </head>
+   <body>
+      <h1>Create a new survey</h1>
+
+
+     {% if courses %}
+      {% if questions %}
+      <form method="POST">
+          <input name="name" placeholder="Survey name"/><br>
+          <p><i>Select the course for which you are creating this survey:</i></p>
+          <select name="course">
+          {% for course in courses %}
+          <option value="{{course[0]}}">{{course[0]}}</option>
+         {% endfor %}
+        </select>
+          <p><i>Select the questions you wish to include in your survey:</i></p>
+      {% for question in questions %}
+         <input name="questions" type="checkbox" value="{{question[0]}}">{{question[0]}}</input><br><br>
+     {% endfor %}
+     <button type="submit" name="bt">Create survey</button>
+    </form>
+     {%else%}
+     <strong>No questions in pool. Please create some questions first.</strong>
+     {% endif %}
+     {%else%}
+     <strong>No courses available</strong>
+     {% endif %}
+   </body>
+</html>
