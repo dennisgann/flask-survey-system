@@ -24,7 +24,7 @@ def index():
 
         return "Your username/password combination was incorrect."
 
-    return render_template("login.html")
+    return render_template("addQuestion.html")
 
 
 @app.route("/questions")
