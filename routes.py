@@ -24,6 +24,22 @@ def index():
 
         return "Your username/password combination was incorrect."
 
+    return render_template("dashboard.html")
+    
+    
+@app.route("/dashboard", methods=["GET"])
+def dashboard():
+    if request.method == "GET":
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        if form.name == "add":
+            if check_password(username, password):
+                session['logged_in'] = True
+            
+
+        #return "Your username/password combination was incorrect."
+
     return render_template("addQuestion.html")
 
 
