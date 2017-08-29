@@ -14,33 +14,22 @@ def check_password(user_name, password):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+
+    if session['logged_in']:
+        return render_template("dashboard.html")
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
         if check_password(username, password):
             session['logged_in'] = True
-            return "You are now authenticated."
+            return render_template("dashboard.html")
 
         return "Your username/password combination was incorrect."
 
-    return render_template("dashboard.html")
-    
-    
-@app.route("/dashboard", methods=["GET"])
-def dashboard():
-    if request.method == "GET":
-        username = request.form["username"]
-        password = request.form["password"]
-        
-        if form.name == "add":
-            if check_password(username, password):
-                session['logged_in'] = True
-            
+    return render_template("login.html")
 
-        #return "Your username/password combination was incorrect."
-
-    return render_template("addQuestion.html")
 
 
 @app.route("/questions")
