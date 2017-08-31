@@ -63,8 +63,10 @@ def addQuestion():
         with open('questions.csv','a') as csv_out:
             writer = csv.writer(csv_out)
             writer.writerow([question, response1, response2, response3, response4, response5])
+            
+            statement = "Question has been successfully added."
 
-        return "Question has been successfully added."
+        return render_template("addQuestion.html", statement = statement)
 
 
     return render_template("addQuestion.html")
