@@ -8,8 +8,18 @@
    <style>
         body {margin: 20px;}
     </style>
-      <h1>Add question to pool</h1>
+      <h1 style="text-align:center">Add question to pool</h1>
       <form method="POST">
+      <div class="pure-menu pure-menu-horizontal" style="text-align:center">
+        <a href="/" class="pure-menu-heading pure-menu-link">DASHBOARD</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link">Add Question</a></li>
+            <li class="pure-menu-item"><a href="/questions" class="pure-menu-link">View Questions</a></li>
+            <li class="pure-menu-item"><a href="/survey/create" class="pure-menu-link">Create Survey</a></li>
+            <li class="pure-menu-item"><a href="/surveys" class="pure-menu-link">View Surveys</a></li>
+            <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Logout</a></li>
+        </ul>
+        </div>
          <textarea name="question" placeholder="Question"></textarea><br>
          <input name="response1" placeholder="Response 1"/><br>
          <input name="response2" placeholder="Response 2"/><br>

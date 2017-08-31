@@ -6,11 +6,17 @@
     </head>
     <body>
         <h1 style="text-align:center">Welcome to your Dashboard!</h1>
-        <a class="pure-button pure-button-primary" href="/questions/add">Add Question</a>
-        <a class="pure-button pure-button-primary" href="/questions">View Questions</a>
-        <a class="pure-button pure-button-primary" href="/survey/create">Create Survey</a>
-        <a class="pure-button pure-button-primary" href="/surveys">View Surveys</a>
-        <span>&nbsp;</span>
-        <a class="pure-button pure-button-primary" href="/logout">Logout</a>
+        <div class="pure-menu pure-menu-horizontal" style="text-align:center">
+        <a href="/" class="pure-menu-heading pure-menu-link">DASHBOARD</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link">Add Question</a></li>
+            <li class="pure-menu-item"><a href="/questions" class="pure-menu-link">View Questions</a></li>
+            <li class="pure-menu-item"><a href="/survey/create" class="pure-menu-link">Create Survey</a></li>
+            <li class="pure-menu-item"><a href="/surveys" class="pure-menu-link">View Surveys</a></li>
+            <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Logout</a></li>
+        </ul>
+        </div>
     </body>
 </html>
+
+
