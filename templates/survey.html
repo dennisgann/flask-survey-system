@@ -4,7 +4,17 @@
    <title>pyChart Survey System :: Survey</title>
    </head>
    <body>
-
+      <h1 style="text-align:center">Create Survey</h1>
+    <div class="pure-menu pure-menu-horizontal" style="text-align:center">
+        <a href="/" class="pure-menu-heading pure-menu-link">DASHBOARD</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link">Add Question</a></li>
+            <li class="pure-menu-item"><a href="/questions" class="pure-menu-link">View Questions</a></li>
+            <li class="pure-menu-item"><a href="/survey/create" class="pure-menu-link">Create Survey</a></li>
+            <li class="pure-menu-item"><a href="/surveys" class="pure-menu-link">View Surveys</a></li>
+            <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Logout</a></li>
+        </ul>
+        </div>
       {% if survey %}
       <h1>{{survey[0][0]}}</h1>
       <h2>{{survey[0][1]}}</h2><br>
