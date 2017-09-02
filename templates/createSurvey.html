@@ -2,10 +2,20 @@
 <html>
    <head>
    <title>pyChart Survey System :: Create Survey</title>
+   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous"> <!PureCSS>
    </head>
    <body>
-      <h1>Create a new survey</h1>
-
+      <h1 style="text-align:center">Create a new survey</h1>
+      <div class="pure-menu pure-menu-horizontal" style="text-align:center">
+        <a href="/" class="pure-menu-heading pure-menu-link">DASHBOARD</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link">Add Question</a></li>
+            <li class="pure-menu-item"><a href="/questions" class="pure-menu-link">View Questions</a></li>
+            <li class="pure-menu-item"><a href="/survey/create" class="pure-menu-link">Create Survey</a></li>
+            <li class="pure-menu-item"><a href="/surveys" class="pure-menu-link">View Surveys</a></li>
+            <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Logout</a></li>
+        </ul>
+        </div>
 
      {% if courses %}
       {% if questions %}
