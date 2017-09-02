@@ -2,7 +2,7 @@
 
 from flask import Flask, redirect, render_template, request, url_for, session
 from server import app
-import csv, time
+import csv, time, os.path
 
 ##login
 users = {"admin": "password"}
@@ -29,8 +29,6 @@ def index():
         return "Your username/password combination was incorrect."
 
     return render_template("login.html")
-
-
 
 @app.route("/questions")
 def questions():
@@ -76,10 +74,11 @@ def surveys():
 
     surveys = []
 
-    with open('surveys.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          surveys.append(row)
+    if os.path.isfile('surveys.csv'):
+        with open('surveys.csv','r') as csv_in:
+          reader = csv.reader(csv_in)
+          for row in reader:
+              surveys.append(row)
 
     return render_template("surveys.html", surveys=surveys)
 
