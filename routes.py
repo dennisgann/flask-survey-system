@@ -1,8 +1,7 @@
-##Code by Dennis Gann
-
 from flask import Flask, redirect, render_template, request, url_for, session
 from server import app
 import csv, time, os.path
+
 
 
 ##classes
@@ -62,8 +61,9 @@ class Survey:
 ##login
 users = {"admin": "password"}
 
+
 def check_password(user_name, password):
-    if password == users[user_name]:
+    if users.get(user_name) == password:
         return True
     return False
 
@@ -72,7 +72,7 @@ def check_password(user_name, password):
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    if session['logged_in']:
+    if session.get('logged_in'):
         return render_template("dashboard.html")
 
     if request.method == "POST":
@@ -83,13 +83,13 @@ def index():
             session['logged_in'] = True
             return render_template("dashboard.html")
 
-        return "Your username/password combination was incorrect."
+        return render_template("login.html", error=1)
 
     return render_template("login.html")
 
 @app.route("/questions")
 def questions():
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
 
     questions = []
@@ -103,7 +103,7 @@ def questions():
 
 @app.route("/questions/add", methods=["GET", "POST"])
 def addQuestion():
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
 
     if request.method == "POST":
@@ -128,7 +128,7 @@ def addQuestion():
 
 @app.route("/surveys")
 def surveys():
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
 
     surveys = []
@@ -156,7 +156,7 @@ def survey(id):
 
 @app.route("/survey/create", methods=["GET", "POST"])
 def createSurvey():
-    if not session['logged_in']:
+    if not session.get('logged_in'):
         return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
 
     if request.method == "POST":
