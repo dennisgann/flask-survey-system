@@ -1,22 +1,70 @@
 <!doctype html>
+
 <html>
-    <head>
-        <title>pyChart Survey System :: Dashboard</title>
-        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous"> <!PureCSS>
-    </head>
-    <body>
-        <h1 style="text-align:center">Welcome to your Dashboard!</h1>
-        <div class="pure-menu pure-menu-horizontal" style="text-align:center">
-        <a href="/" class="pure-menu-heading pure-menu-link">DASHBOARD</a>
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link">Add Question</a></li>
-            <li class="pure-menu-item"><a href="/questions" class="pure-menu-link">View Questions</a></li>
-            <li class="pure-menu-item"><a href="/survey/create" class="pure-menu-link">Create Survey</a></li>
-            <li class="pure-menu-item"><a href="/surveys" class="pure-menu-link">View Surveys</a></li>
-            <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Logout</a></li>
-        </ul>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+
+    <title></title>
+
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="static/css/styles.css">
+	<link rel="stylesheet" href="static/css/font-awesome.min.css">
+
+</head>
+<body>
+
+    <div id="main">
+
+
+        <div class="header">
+            <h1>pyChart</h1>
+            <h2>A python/flask Survey System created with <i class="fa fa-pie-chart"></i> in mind.</h2>
+
+            <div class="pure-menu pure-menu-horizontal">
+				<a href="/" class="pure-menu-heading pure-menu-link"><i class="fa fa-home"></i> DASHBOARD</a>
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+						<a class="pure-menu-link"><i class="fa fa-question"></i> Questions</a></a>
+						<ul class="pure-menu-children">
+							<li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
+							<li class="pure-menu-item"><a href="/questions" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
+						</ul>
+					</li>
+					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+						<a class="pure-menu-link"><i class="fa fa-commenting"></i> Surveys</a></a>
+						<ul class="pure-menu-children">
+							<li class="pure-menu-item"><a href="/surveys/create" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
+							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
+						</ul>
+					</li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link pure-menu-disabled"><i class="fa fa-pie-chart"></i> Results</a></li>
+					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
+				</ul>
+			</div>
         </div>
-    </body>
+
+        <div class="content">
+
+            <h2 class="content-subhead"><i class="fa fa-link"></i> Quick links</h2>
+            <p>
+            	<a class="pure-button pure-button-primary" href="#">Create Question</a>
+				<a class="pure-button pure-button-primary" href="#">View Question</a>
+				<a class="pure-button pure-button-primary" href="#">Create Survey</a>
+				<a class="pure-button pure-button-primary" href="#">View Surveys</a>
+				<a class="pure-button pure-button-primary" href="#">View Results</a>
+
+            </p>
+
+
+            <h2 class="content-subhead"><i class="fa fa-info"></i> About the Project</h2>
+            <p>
+            	pyChart is a python/flask built Survey System. Created by Frank Foo, Dennis Gann and Charmaine Leung for a UNSW COMP1531 17s2 Group Project.
+            </p>
+
+        </div>
+    </div>
+
+</body>
 </html>
-
-

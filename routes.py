@@ -200,3 +200,7 @@ def createSurvey():
 def logout():
     session['logged_in'] = False
     return redirect(url_for("index"))
+
+@app.route("/template")
+def template():
+    return render_template("template.html")
