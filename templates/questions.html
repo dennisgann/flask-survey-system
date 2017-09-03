@@ -6,7 +6,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
-   <title></title>
+   <title>pyChart Survey System :: Question Pool</title>
 
 	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 	<link rel="stylesheet" href="/static/css/styles.css">
@@ -33,7 +33,7 @@
 						</ul>
 					</li>
 					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-						<a class="pure-menu-link"><i class="fa fa-commenting"></i> Surveys</a></a>
+						<a class="pure-menu-link"><i class="fa fa-comments"></i> Surveys</a></a>
 						<ul class="pure-menu-children">
 							<li class="pure-menu-item"><a href="/surveys/create" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
 							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
@@ -51,6 +51,11 @@
 
            <h2 class="content-subhead"><i class="fa fa-eye"></i> Question Pool</h2>
 
+           {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+           {% if error == 1 %}<p style="color: red;">The question could not be deleted. Please try again later.</p>{% endif %}
+           {% if success %}<p style="color: green;">The question has been deleted successfully.</p>{% endif %}
+
+
            {% if questions %}
            <table class="pure-table pure-table-horizontal">
                <thead>
@@ -62,8 +67,8 @@
                    {% endfor %}
                </tbody>
            </table>
-           {%else%}
-           No questions in pool
+           {% else %}
+           <p>There are no questions currently in the pool. Please add a question first.</p>
            {% endif %}
         </div>
    </div>

@@ -90,7 +90,7 @@ def index():
 @app.route("/questions")
 def questions():
     if not session.get('logged_in'):
-        return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
+        return redirect(url_for("index"))
 
     questions = []
 
@@ -104,7 +104,7 @@ def questions():
 @app.route("/questions/add", methods=["GET", "POST"])
 def addQuestion():
     if not session.get('logged_in'):
-        return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
+        return redirect(url_for("index"))
 
     if request.method == "POST":
 
@@ -129,7 +129,7 @@ def addQuestion():
 @app.route("/surveys")
 def surveys():
     if not session.get('logged_in'):
-        return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
+        return redirect(url_for("index"))
 
     surveys = []
 
@@ -157,7 +157,7 @@ def survey(id):
 @app.route("/surveys/create", methods=["GET", "POST"])
 def createSurvey():
     if not session.get('logged_in'):
-        return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
+        return redirect(url_for("index"))
 
     if request.method == "POST":
 
@@ -199,8 +199,5 @@ def createSurvey():
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
+    session.clear()
     return redirect(url_for("index"))
-
-@app.route("/template")
-def template():
-    return render_template("template.html")

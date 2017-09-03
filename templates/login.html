@@ -26,7 +26,8 @@
         <div class="content">
             <h2 class="content-subhead"><i class="fa fa-sign-in"></i> Login</h2>
 
-            {% if error %}<p style="color: red;">Your username/password was incorrect.</p>{% endif %}
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+            {% if error == 1 %}<p style="color: red;">Your username/password was incorrect.</p>{% endif %}
 
             <form class="pure-form pure-form-aligned" method="POST">
                 <fieldset>

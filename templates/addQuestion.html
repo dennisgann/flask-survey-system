@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
-    <title></title>
+    <title>pyChart Survey System :: Add Question</title>
 
 	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 	<link rel="stylesheet" href="/static/css/styles.css">
@@ -33,7 +33,7 @@
 						</ul>
 					</li>
 					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-						<a class="pure-menu-link"><i class="fa fa-commenting"></i> Surveys</a></a>
+						<a class="pure-menu-link"><i class="fa fa-comments"></i> Surveys</a></a>
 						<ul class="pure-menu-children">
 							<li class="pure-menu-item"><a href="/surveys/create" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
 							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
@@ -51,6 +51,7 @@
             <h2 class="content-subhead"><i class="fa fa-plus"></i> Add a new Question</h2>
 
             {% if success %}<p style="color: green;">Your question has been successfully added to the pool.</p>{% endif %}
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
             {% if error == 1 %}<p style="color: red;">Please complete all required fields.</p>{% endif %}
             {% if error == 2 %}<p style="color: red;">An error occured whilst adding your question to the pool. Please try again later.</p>{% endif %}
 
@@ -62,6 +63,7 @@
                         <textarea class="pure-input-1-2" name="question" placeholder="Question text"></textarea>
                         <span class="pure-form-message-inline">* required</span>
                     </div>
+                    <br>
                     <div class="pure-control-group">
                         <label>Response 1</label>
                         <input class="pure-input-1-2" name="response1" value="Strongly disagree"/>

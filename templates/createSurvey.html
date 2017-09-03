@@ -1,43 +1,116 @@
 <!doctype html>
+
 <html>
-   <head>
-   <title>pyChart Survey System :: Create Survey</title>
-   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous"> <!PureCSS>
-   </head>
-   <body>
-      <h1 style="text-align:center">Create a new survey</h1>
-      <div class="pure-menu pure-menu-horizontal" style="text-align:center">
-        <a href="/" class="pure-menu-heading pure-menu-link">DASHBOARD</a>
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link">Add Question</a></li>
-            <li class="pure-menu-item"><a href="/questions" class="pure-menu-link">View Questions</a></li>
-            <li class="pure-menu-item"><a href="/survey/create" class="pure-menu-link">Create Survey</a></li>
-            <li class="pure-menu-item"><a href="/surveys" class="pure-menu-link">View Surveys</a></li>
-            <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Logout</a></li>
-        </ul>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+
+    <title>pyChart Survey System :: Create Survey</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+
+</head>
+<body>
+
+    <div id="main">
+
+
+        <div class="header">
+            <h1>pyChart</h1>
+            <h2>A python/flask Survey System created with <i class="fa fa-pie-chart"></i> in mind.</h2>
+
+            <div class="pure-menu pure-menu-horizontal">
+				<a href="/" class="pure-menu-heading pure-menu-link"><i class="fa fa-home"></i> DASHBOARD</a>
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+						<a class="pure-menu-link"><i class="fa fa-question"></i> Questions</a></a>
+						<ul class="pure-menu-children">
+							<li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
+							<li class="pure-menu-item"><a href="/questions" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
+						</ul>
+					</li>
+					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+						<a class="pure-menu-link"><i class="fa fa-comments"></i> Surveys</a></a>
+						<ul class="pure-menu-children">
+							<li class="pure-menu-item"><a href="/surveys/create" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
+							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
+						</ul>
+					</li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link pure-menu-disabled"><i class="fa fa-pie-chart"></i> Results</a></li>
+					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
+				</ul>
+			</div>
         </div>
 
-     {% if courses %}
-      {% if questions %}
-      <form method="POST">
-          <input name="name" placeholder="Survey name"/><br>
-          <p><i>Select the course for which you are creating this survey:</i></p>
-          <select name="course">
-          {% for course in courses %}
-          <option value="{{course[0]}}">{{course[0]}}</option>
-         {% endfor %}
-        </select>
-          <p><i>Select the questions you wish to include in your survey:</i></p>
-      {% for question in questions %}
-         <input name="questions" type="checkbox" value="{{question[0]}}">{{question[0]}}</input><br><br>
-     {% endfor %}
-     <button type="submit" name="bt">Create survey</button>
-    </form>
-     {%else%}
-     <strong>No questions in pool. Please create some questions first.</strong>
-     {% endif %}
-     {%else%}
-     <strong>No courses available</strong>
-     {% endif %}
-   </body>
+        <div class="content">
+
+
+            <h2 class="content-subhead"><i class="fa fa-plus"></i> Add a new Survey</h2>
+
+            {% if success %}<p style="color: green;">Your question has been successfully added to the pool.</p>{% endif %}
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+            {% if error == 1 %}<p style="color: red;">Please complete all required fields.</p>{% endif %}
+            {% if error == 2 %}<p style="color: red;">An error occured whilst adding your question to the pool. Please try again later.</p>{% endif %}
+
+
+
+            {% if courses %}
+             {% if questions %}
+
+
+            {%else%}
+            <strong>No questions in pool. Please create some questions first.</strong>
+            {% endif %}
+            {%else%}
+            <strong>No courses available</strong>
+            {% endif %}
+
+
+            <form class="pure-form pure-form-aligned" method="POST">
+                <fieldset>
+                    <div class="pure-control-group">
+                        <label>Survey name</label>
+                        <input class="pure-input-1-2" name="name" placeholder="Survey name"></input>
+                        <span class="pure-form-message-inline">* required</span>
+                    </div>
+                    <div class="pure-control-group">
+                        <label>Course</label>
+                        <select class="pure-input-1-2" name="course">
+                            {% for course in courses %}
+                            <option value="{{course[0]}}">{{course[0]}}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="pure-form-message-inline">* required</span>
+                    </div>
+                    <br>
+                    <div class="pure-control-group">
+                        <label>Questions</label>
+                        <div class="pure-u-1-2">
+                            <i>Select the questions you wish to include.</i>
+                        </div>
+                        <span class="pure-form-message-inline">* required</span>
+                    </div>
+
+                    {% for question in questions %}
+                    <div class="pure-control-group">
+                        <label></label>
+                        <input name="questions" type="checkbox" value="{{question[0]}}">{{question[0]}}</input>
+                    </div>
+                    {% endfor %}
+
+                    <div class="pure-controls">
+                        <button type="submit" name="bt" class="pure-button pure-button-primary">Create Survey</button>
+                    </div>
+
+
+                </fieldset>
+         </form>
+
+        </div>
+    </div>
+
+</body>
 </html>
