@@ -4,63 +4,71 @@ from flask import Flask, redirect, render_template, request, url_for, session
 from server import app
 import csv, time, os.path
 
-##login
-users = {"admin": "password"}
 
+##classes
 class Question:
-    def __init__(self,text):
-        self._text = text
-        self._id = id
-
-    def _get_question(self):
-        return _text
-
-    def _set_question(text, id):
-        self._text = text
-        self._id = id
-
-    question = property(_get_question,_set_question)
-
-OR
-
-class Question:
-    def __init__(self,text):
+    def __init__(self,text,id):
         self._text = text
         self._id = id
 
     @property
-    def question(self):
+    def text(self):
         return self._text
 
-    @property.setter
-    def question(text, id):
+    @text.setter
+    def text(self,text):
         self._text = text
-        self._id = id
 
-#Not sure how to implement a list into a class - sorry
+    @property
+    def id(self):
+        return self._id
+
+
 class Survey:
     def __init__(self, id, name, course, questions):
         self._id = id
         self._name = name
-        self._course = course 
-        self._questions = questions
-
-    def _get_survey(self):
-        return self._id + ' ' + self.name + ' ' + self.course + ' ' + self.questions
-    
-    def _set_survey(self, id, name, course, questions):
-        self._id = id
-        self._name = name
         self._course = course
         self._questions = questions
-    
-    survey = property(_get_survey,_set_survey)
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self,name):
+        self._name = name
+
+    @property
+    def course(self):
+        return self._course
+
+    @course.setter
+    def course(self,course):
+        self._course = course
+
+    @property
+    def questions(self):
+        return self._questions
+
+    @questions.setter
+    def questions(self,questions):
+        self._questions = questions
+
+##login
+users = {"admin": "password"}
 
 def check_password(user_name, password):
     if password == users[user_name]:
         return True
     return False
 
+
+##routes
 @app.route("/", methods=["GET", "POST"])
 def index():
 
@@ -110,7 +118,7 @@ def addQuestion():
         with open('questions.csv','a') as csv_out:
             writer = csv.writer(csv_out)
             writer.writerow([question, response1, response2, response3, response4, response5])
-            
+
             statement = "Question has been successfully added."
 
         return render_template("addQuestion.html", statement = statement)
