@@ -154,7 +154,7 @@ def survey(id):
 
     return render_template("survey.html", survey=survey)
 
-@app.route("/survey/create", methods=["GET", "POST"])
+@app.route("/surveys/create", methods=["GET", "POST"])
 def createSurvey():
     if not session.get('logged_in'):
         return "Not authorised! Please " + "<a href='/'>login</a>" + " first."
