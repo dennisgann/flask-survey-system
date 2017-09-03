@@ -23,6 +23,14 @@ class Question:
     def id(self):
         return self._id
 
+    @text.writer
+    def writer(self,text,id):
+        with open('questions.csv','w') as csv_out:
+            writer=csv.writer(csv_in)
+            for row in writer:
+                writer.writerow(self._id,self._text)
+
+            return "Question has been successfully added."
 
 class Survey:
     def __init__(self, id, name, course, questions):
