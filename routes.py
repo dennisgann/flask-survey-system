@@ -2,10 +2,59 @@
 
 from flask import Flask, redirect, render_template, request, url_for, session
 from server import app
-import csv, time
+import csv, time, os.path
 
 ##login
 users = {"admin": "password"}
+
+class Question:
+    def __init__(self,text):
+        self._text = text
+        self._id = id
+
+    def _get_question(self):
+        return _text
+
+    def _set_question(text, id):
+        self._text = text
+        self._id = id
+
+    question = property(_get_question,_set_question)
+
+OR
+
+class Question:
+    def __init__(self,text):
+        self._text = text
+        self._id = id
+
+    @property
+    def question(self):
+        return self._text
+
+    @property.setter
+    def question(text, id):
+        self._text = text
+        self._id = id
+
+#Not sure how to implement a list into a class - sorry
+class Survey:
+    def __init__(self, id, name, course, questions):
+        self._id = id
+        self._name = name
+        self._course = course 
+        self._questions = questions
+
+    def _get_survey(self):
+        return self._id + ' ' + self.name + ' ' + self.course + ' ' + self.questions
+    
+    def _set_survey(self, id, name, course, questions):
+        self._id = id
+        self._name = name
+        self._course = course
+        self._questions = questions
+    
+    survey = property(_get_survey,_set_survey)
 
 def check_password(user_name, password):
     if password == users[user_name]:
@@ -29,8 +78,6 @@ def index():
         return "Your username/password combination was incorrect."
 
     return render_template("login.html")
-
-
 
 @app.route("/questions")
 def questions():
@@ -78,10 +125,11 @@ def surveys():
 
     surveys = []
 
-    with open('surveys.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          surveys.append(row)
+    if os.path.isfile('surveys.csv'):
+        with open('surveys.csv','r') as csv_in:
+          reader = csv.reader(csv_in)
+          for row in reader:
+              surveys.append(row)
 
     return render_template("surveys.html", surveys=surveys)
 
