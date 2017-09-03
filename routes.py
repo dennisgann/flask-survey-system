@@ -23,10 +23,10 @@ class Question:
     def id(self):
         return self._id
 
-    @text.writer
+    #@text.writer
     def writer(self,text,id):
         with open('questions.csv','w') as csv_out:
-            writer=csv.writer(csv_in)
+            writer=csv.writer(csv_out)
             for row in writer:
                 writer.writerow(self._id,self._text)
 
@@ -67,6 +67,44 @@ class Survey:
     def questions(self,questions):
         self._questions = questions
 
+    #Writes to survey.csv, mostly taken from def createSurvey():
+    def creator(self):
+        
+        #with open('survey.csv','w') as csv_out:
+        #    writer=csv.writer(csv_out)
+        #    for row in writer:
+        #        writer.writerow(self.id,self.name,self.course)
+        #           for row in writer:
+
+        with open('surveys/' + id + '.csv','w') as csv_out:
+            writer = csv.writer(csv_out)
+            writer.writerow([self._name, self._course])
+            writer.writerow(self._questions)
+
+        with open('surveys.csv','a') as csv_out:
+            writer = csv.writer(csv_out) 
+            writer.writerow([self._id, self._name, self._course, 1])
+
+        return "Successfully created survey with ID: " + self._id
+
+        questions = []
+        with open('questions.csv','r') as csv_in:
+            reader = csv.reader(csv_in)
+            for row in reader:
+                questions.append(row) 
+                # I'm not sure how the program knows which    questions are needed 
+
+        course = []
+
+        with open('courses.csv','r') as csv_in:
+        reader = csv.reader(csv_in)
+        next(reader)
+        for row in reader:
+            if row:
+                courses.append(row)
+
+        return render_template("createSurvey.html", questions=questions, courses=courses)
+
 ##login
 users = {"admin": "password"}
 
@@ -74,7 +112,6 @@ def check_password(user_name, password):
     if password == users[user_name]:
         return True
     return False
-
 
 ##routes
 @app.route("/", methods=["GET", "POST"])
