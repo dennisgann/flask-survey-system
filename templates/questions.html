@@ -63,7 +63,7 @@
                </thead>
                <tbody>
                    {% for question in questions %}
-                   <tr><td>{{question[0]}}</td><td>{{question[1]}}</td><td>{{question[2]}}</td><td>{{question[3]}}</td><td>{{question[4]}}</td><td>{{question[5]}}</td><td><a class="pure-button" href="questions/delete/<id>"><i class="fa fa-trash"></i></a></td></tr>
+                   <tr><td>{{ question.text }}</td><td>{{ question.responses[0] }}</td><td>{{ question.responses[1] }}</td><td>{{ question.responses[2] }}</td><td>{{ question.responses[3] }}</td><td>{{ question.responses[4] }}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
                    {% endfor %}
                </tbody>
            </table>

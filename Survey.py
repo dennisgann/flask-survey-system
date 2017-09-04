@@ -35,7 +35,7 @@ class Survey:
 
     #Writes to survey.csv, mostly taken from def createSurvey():
     def creator(self):
-        
+
         #with open('survey.csv','w') as csv_out:
         #    writer=csv.writer(csv_out)
         #    for row in writer:
@@ -48,7 +48,7 @@ class Survey:
             writer.writerow(self._questions)
 
         with open('surveys.csv','a') as csv_out:
-            writer = csv.writer(csv_out) 
+            writer = csv.writer(csv_out)
             writer.writerow([self._id, self._name, self._course, 1])
 
         return "Successfully created survey with ID: " + self._id
@@ -57,8 +57,8 @@ class Survey:
         with open('questions.csv','r') as csv_in:
             reader = csv.reader(csv_in)
             for row in reader:
-                questions.append(row) 
-                # I'm not sure how the program knows which    questions are needed 
+                questions.append(row)
+                # I'm not sure how the program knows which    questions are needed
 
         course = []
 
