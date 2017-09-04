@@ -2,62 +2,6 @@ from flask import Flask, redirect, render_template, request, url_for, session
 from server import app
 import csv, time, os.path
 
-
-
-##classes
-class Question:
-    def __init__(self,text,id):
-        self._text = text
-        self._id = id
-
-    @property
-    def text(self):
-        return self._text
-
-    @text.setter
-    def text(self,text):
-        self._text = text
-
-    @property
-    def id(self):
-        return self._id
-
-
-class Survey:
-    def __init__(self, id, name, course, questions):
-        self._id = id
-        self._name = name
-        self._course = course
-        self._questions = questions
-
-    @property
-    def id(self):
-        return self._id
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self,name):
-        self._name = name
-
-    @property
-    def course(self):
-        return self._course
-
-    @course.setter
-    def course(self,course):
-        self._course = course
-
-    @property
-    def questions(self):
-        return self._questions
-
-    @questions.setter
-    def questions(self,questions):
-        self._questions = questions
-
 ##login
 users = {"admin": "password"}
 
@@ -66,7 +10,6 @@ def check_password(user_name, password):
     if users.get(user_name) == password:
         return True
     return False
-
 
 ##routes
 @app.route("/", methods=["GET", "POST"])
