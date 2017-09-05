@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
-    <title>pyChart Survey System :: {{survey[0][0]}}</title>
+    <title>pyChart Survey System :: {{ survey.name }}</title>
 
 	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 	<link rel="stylesheet" href="/static/css/styles.css">
@@ -17,33 +17,30 @@
 
     <div id="main">
 
-
         <div class="header">
-            <h1>{{survey[0][0]}}</h1>
-            <h2>{{survey[0][1]}}</h2>
+            <h1>{{ survey.name }}</h1>
+            <h2>{{ survey.course }}</h2>
         </div>
         <div class="content">
+
+            {% if survey.state == '1' %}
 
             <h2 class="content-subhead"><i class="fa fa-comment"></i> Please complete the survey below</h2>
             <p>Your feedback is greatly appreciated.</p><br>
 
-            {% if survey %}
-
             <form class="pure-form pure-form-stacked" method="POST">
                 <fieldset>
-                    {% for question in survey[1] %}
-                    <legend>{{question}}</legend>
-                        <input name="{{loop.index}}" type="radio" value="1">Response1</input><br>
-                        <input name="{{loop.index}}" type="radio" value="2">Response2</input><br>
-                        <input name="{{loop.index}}" type="radio" value="3">Response3</input><br>
-                        <input name="{{loop.index}}" type="radio" value="4">Response4</input><br>
-                        <input name="{{loop.index}}" type="radio" value="5">Response5</input><br><br>
+                    {% for question in survey.questions %}
+                    <legend>{{ question.text }}</legend>
+                        {% for response in question.responses %}
+                        <input name="{{ question.id }}" type="radio" value="{{ loop.index }}"> {{ response }}</input><br>
+                        {% endfor %}
                     {% endfor %}
-                    <button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
+                    <br><button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
                 </fieldset>
             </form>
            {%else%}
-           <strong>Not a valid survey link.</strong>
+           <p>This survey is no longer accepting responses.</p>
            {% endif %}
 
         </div>

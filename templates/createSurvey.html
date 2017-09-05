@@ -53,22 +53,12 @@
             {% if success %}<p style="color: green;">Your question has been successfully added to the pool.</p>{% endif %}
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
             {% if error == 1 %}<p style="color: red;">Please complete all required fields.</p>{% endif %}
-            {% if error == 2 %}<p style="color: red;">An error occured whilst adding your question to the pool. Please try again later.</p>{% endif %}
+            {% if error == 2 %}<p style="color: red;">An error occured whilst creating your survey. Please try again later.</p>{% endif %}
 
 
 
             {% if courses %}
-             {% if questions %}
-
-
-            {%else%}
-            <strong>No questions in pool. Please create some questions first.</strong>
-            {% endif %}
-            {%else%}
-            <strong>No courses available</strong>
-            {% endif %}
-
-
+            {% if questions %}
             <form class="pure-form pure-form-aligned" method="POST">
                 <fieldset>
                     <div class="pure-control-group">
@@ -97,7 +87,7 @@
                     {% for question in questions %}
                     <div class="pure-control-group">
                         <label></label>
-                        <input name="questions" type="checkbox" value="{{question[0]}}">{{question[0]}}</input>
+                        <input name="questions" type="checkbox" value="{{ question.id }}">{{ question.text }}</input>
                     </div>
                     {% endfor %}
 
@@ -108,6 +98,12 @@
 
                 </fieldset>
          </form>
+         {%else%}
+         <p>There are no questions currently in the pool. Please add a question first.</p>
+         {% endif %}
+         {%else%}
+         <p>No courses available.</p>
+         {% endif %}
 
         </div>
     </div>
