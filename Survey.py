@@ -1,13 +1,20 @@
+import csv
+
 class Survey:
-    def __init__(self, id, name, course, questions):
-        self._id = id
+    def __init__(self, sid, state, name, course, questions):
+        self._id = sid
         self._name = name
         self._course = course
         self._questions = questions
+        self._state = state
 
     @property
     def id(self):
         return self._id
+
+    @id.setter
+    def id(self,sid):
+        self._id = id
 
     @property
     def name(self):
@@ -33,40 +40,28 @@ class Survey:
     def questions(self,questions):
         self._questions = questions
 
-    #Writes to survey.csv, mostly taken from def createSurvey():
-    def creator(self):
+    @property
+    def state(self):
+        return self._state
 
-        #with open('survey.csv','w') as csv_out:
-        #    writer=csv.writer(csv_out)
-        #    for row in writer:
-        #        writer.writerow(self.id,self.name,self.course)
-        #           for row in writer:
+    @state.setter
+    def state(self,state):
+        self._state = state
 
-        with open('surveys/' + id + '.csv','w') as csv_out:
+
+    ##functions
+
+    def write(self):
+
+        with open('surveys/' +  self._id + '.csv','w') as csv_out:
             writer = csv.writer(csv_out)
-            writer.writerow([self._name, self._course])
+            writer.writerow([self._id, self._name, self._course])
             writer.writerow(self._questions)
 
         with open('surveys.csv','a') as csv_out:
             writer = csv.writer(csv_out)
-            writer.writerow([self._id, self._name, self._course, 1])
+            writer.writerow([self._id, self._state, self._name, self._course])
 
-        return "Successfully created survey with ID: " + self._id
+            return 1 ##success
 
-        questions = []
-        with open('questions.csv','r') as csv_in:
-            reader = csv.reader(csv_in)
-            for row in reader:
-                questions.append(row)
-                # I'm not sure how the program knows which    questions are needed
-
-        course = []
-
-        with open('courses.csv','r') as csv_in:
-        reader = csv.reader(csv_in)
-        next(reader)
-        for row in reader:
-            if row:
-                courses.append(row)
-
-        return render_template("createSurvey.html", questions=questions, courses=courses)
+        return 0 ##failure

@@ -23,7 +23,7 @@ class Question:
 
     @id.setter
     def id(self,id):
-        self._text = id
+        self._id = id
 
     @property
     def responses(self):

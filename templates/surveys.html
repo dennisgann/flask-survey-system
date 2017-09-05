@@ -57,14 +57,14 @@
 
 
 
-           {% if surveys %}
+           {% if active_surveys %}
            <table class="pure-table pure-table-horizontal">
                <thead>
                    <tr><th>Name</th><th>Course</th><th>Link</th><th></th></tr>
                </thead>
-               {% for survey in surveys %}
-               {% if survey[3] == "1" %}
-               <tr><td>{{survey[1]}}</td><td>{{survey[2]}}</td><td><a href="survey/{{survey[0]}}" target="_blank">localhost/survey/{{survey[0]}}</a></td><td><a class="pure-button" href="surveys/delete/{{ survey[0] }}"><i class="fa fa-ban"></i></a></td></tr>
+               {% for survey in active_surveys %}
+               {% if survey.state == "1" %}
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course }}</td><td><a href="survey/{{ survey.id }}" target="_blank">{{ request.url_root + "survey/" + survey.id }}</a></td><td><a class="pure-button" href="surveys/close/{{ survey.id }}"><i class="fa fa-ban"></i></a></td></tr>
 
             {% endif %}
             {% endfor %}
@@ -76,14 +76,14 @@
 
            <h2 class="content-subhead"><i class="fa fa-eye-slash"></i> Inactive Surveys</h2>
 
-           {% if surveys %}
+           {% if inactive_surveys %}
            <table class="pure-table pure-table-horizontal">
                <thead>
                    <tr><th>Name</th><th>Course</th><th></th></tr>
                </thead>
-               {% for survey in surveys %}
-               {% if survey[3] == "0" %}
-               <tr><td>{{survey[1]}}</td><td>{{survey[2]}}</td><td><a class="pure-button pure-button-disabled" href="#"><i class="fa fa-pie-chart"></i></a></td></tr>
+               {% for survey in inactive_surveys %}
+               {% if survey.state == "0" %}
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course }}</td><td><a class="pure-button pure-button-disabled" href="#"><i class="fa fa-pie-chart"></i></a></td></tr>
                {% endif %}
                {% endfor %}
            </table>
