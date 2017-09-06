@@ -1,24 +1,22 @@
+##IMPORTS
+
 from flask import Flask, redirect, render_template, request, url_for, session
-import csv, time
 from server import app
-from Question import Question
-from Survey import Survey
+import time
 
-##login
-users = {"admin": "password"}
-
-def check_password(user_name, password):
-    if users.get(user_name) == password:
-        return True
-    return False
+from models import Question, Survey, QuestionStore, SurveyStore
+from functions import check_login, check_password, check_data, get_courses
 
 
-##routes
+##ROUTES
+
+#index route - login or redirect to dashboard
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    if session.get('logged_in'):
+    if check_login():
         return render_template("dashboard.html")
+
 
     if request.method == "POST":
         username = request.form["username"]
@@ -32,19 +30,14 @@ def index():
 
     return render_template("login.html")
 
+#questions route - displays question pool
 @app.route("/questions")
 def questions():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    questions = []
+    if not check_login(): return redirect(url_for('index'))
+    check_data();
 
-    with open('questions.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[1] == '1':
-              question = Question(row[0], row[1], row[2], row[3:])
-              questions.append(question)
+    questions = QuestionStore().active
 
     if request.args.get('delete'):
         if request.args.get('delete') == '1':
@@ -54,38 +47,31 @@ def questions():
     else:
         return render_template("questions.html", questions=questions)
 
+
+#delete question - deletest question from pool and redirects back to questions
 @app.route("/questions/delete/<qid>")
 def delQuestion(qid):
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    questions = []
+    if not check_login(): return redirect(url_for('index'))
+    check_data();
+
     delete = 0
 
-    with open('questions.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[0] == qid and row[1] == '1':
-              question = Question(row[0], 0, row[2], row[3:])
-              questions.append(question)
-              delete = 1
-          else:
-              question = Question(row[0], row[1], row[2], row[3:])
-              questions.append(question)
+    delQuestion = QuestionStore().find(qid)
 
-
-    with open('questions.csv', "w") as csv_out:
-        csv_out.truncate()
-
-    for question in questions:
-        question.write()
+    if delQuestion:
+        delQuestion.state = '0'
+        delete = 1
+        QuestionStore().update(delQuestion)
 
     return redirect(url_for("questions", delete=delete))
 
+
+#add question - adds question to pool
 @app.route("/questions/add", methods=["GET", "POST"])
 def addQuestion():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
+
+    if not check_login(): return redirect(url_for('index'))
 
     if request.method == "POST":
 
@@ -98,30 +84,22 @@ def addQuestion():
 
         question = Question(qID,1,qText,responses)
 
-        if question.write():
+        if QuestionStore().add(question):
             return render_template("addQuestion.html", success=1)
         else:
             return render_template("addQuestion.html", error=2)
 
-
     return render_template("addQuestion.html")
 
+#displays surveys - both active and inactive
 @app.route("/surveys")
 def surveys():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    active_surveys = []
-    inactive_surveys = []
+    if not check_login(): return redirect(url_for('index'))
+    check_data();
 
-    with open('surveys.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-              survey = Survey(row[0], row[1], row[2], row[3], [])
-              if survey.state == '1':
-                  active_surveys.append(survey)
-              else:
-                  inactive_surveys.append(survey)
+    active_surveys = SurveyStore().active
+    inactive_surveys = SurveyStore().inactive
 
     if request.args.get('close'):
         if request.args.get('close') == '1':
@@ -132,59 +110,34 @@ def surveys():
         return render_template("surveys.html", active_surveys=active_surveys, inactive_surveys=inactive_surveys)
 
 
+#close survey - makes survey inactive and redirects to surveys page
 @app.route("/surveys/close/<sid>")
 def closeSurvey(sid):
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    surveys = []
+    if not check_login(): return redirect(url_for('index'))
+    check_data();
+
     close = 0
 
-    with open('surveys.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[0] == sid and row[1] == '1':
-              survey = Survey(row[0], 0, row[2], row[3], [])
-              surveys.append(survey)
-              close = 1
-          else:
-              survey = Survey(row[0], row[1], row[2], row[3], [])
-              surveys.append(survey)
+    closeSurvey = SurveyStore().find(sid)
 
-
-    with open('surveys.csv', "w") as csv_out:
-        csv_out.truncate()
-
-    for survey in surveys:
-        survey.write()
+    if closeSurvey:
+        closeSurvey.state = '0'
+        close = 1
+        SurveyStore().update(closeSurvey)
 
     return redirect(url_for("surveys", close=close))
 
 
-
+#create survey - captures input a creats a new survey object in SurveyStore
 @app.route("/surveys/create", methods=["GET", "POST"])
 def createSurvey():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    questions = []
+    if not check_login(): return redirect(url_for('index'))
+    check_data();
 
-    with open('questions.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[1] == '1':
-              question = Question(row[0], row[1], row[2], row[3:])
-              questions.append(question)
-
-    courses = []
-
-    with open('courses.csv','r') as csv_in:
-        reader = csv.reader(csv_in)
-        next(reader)
-        for row in reader:
-            if row:
-                courses.append(row)
-
+    questions = QuestionStore().active
+    courses = get_courses()
 
     if request.method == "POST":
 
@@ -192,42 +145,39 @@ def createSurvey():
         surveyCourse = request.form["course"]
         surveyQs = request.form.getlist("questions")
         surveyID =  str(int(time.time()))
-        survey = Survey(surveyID, 1, surveyName, surveyCourse, surveyQs)
 
         if surveyName.isspace() or surveyName == "" or not surveyQs:
             return render_template("createSurvey.html", questions=questions, courses=courses, error=1)
 
-        if survey.write():
+        survey = Survey(surveyID, 1, surveyName, surveyCourse, surveyQs)
+
+        if SurveyStore().add(survey):
             return render_template("createSurvey.html", questions=questions, courses=courses, success=1)
         else:
             return render_template("createSurvey.html", questions=questions, courses=courses, error=2)
 
+    else:
+        return render_template("createSurvey.html", questions=questions, courses=courses)
 
-    return render_template("createSurvey.html", questions=questions, courses=courses)
 
-
+#survey page (public) - allows reponses to be collected
 @app.route("/survey/<sid>")
 def survey(sid):
+    check_data();
 
-    with open('surveys/' + sid + '.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      row1 = next(reader)
-      row2 = next(reader)
-      questions = []
-      with open('questions.csv','r') as csv_in:
-        reader = csv.reader(csv_in)
-        for row in reader:
-            if row[0] in row2:
-                question = Question(row[0], row[1], row[2], row[3:])
-                questions.append(question)
+    survey = SurveyStore().find(sid)
 
-      survey = Survey(sid,'1',row1[1],row1[2],questions)
+    questions = []
 
-      return render_template("survey.html", survey=survey)
+    for questionID in survey.questions:
+        questions.append(QuestionStore().find(questionID))
+
+    survey.questions = questions
+
+    return render_template("survey.html", survey=survey)
 
 
-
-
+#logout - destroys session and redirects to index/login
 @app.route("/logout")
 def logout():
     session['logged_in'] = False

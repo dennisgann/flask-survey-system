@@ -59,11 +59,13 @@
            {% if questions %}
            <table class="pure-table pure-table-horizontal">
                <thead>
-                   <tr><th>Question</th><th>Response1</th><th>Response2</th><th>Response3</th><th>Response4</th><th>Response5</th><th></th></tr>
+                   <tr><th>Question</th><th>Responses</th><th></th></tr>
                </thead>
                <tbody>
                    {% for question in questions %}
-                   <tr><td>{{ question.text }}</td><td>{{ question.responses[0] }}</td><td>{{ question.responses[1] }}</td><td>{{ question.responses[2] }}</td><td>{{ question.responses[3] }}</td><td>{{ question.responses[4] }}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
+                   {% if question.state == '1' %}
+                   <tr><td>{{ question.text }}</td><td>{% for response in question.responses %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
+                   {% endif %}
                    {% endfor %}
                </tbody>
            </table>

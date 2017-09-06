@@ -69,6 +69,7 @@
                     <div class="pure-control-group">
                         <label>Course</label>
                         <select class="pure-input-1-2" name="course">
+                            <option disabled>Please select a course...</option>
                             {% for course in courses %}
                             <option value="{{course[0]}}">{{course[0]}}</option>
                             {% endfor %}
@@ -87,7 +88,7 @@
                     {% for question in questions %}
                     <div class="pure-control-group">
                         <label></label>
-                        <input name="questions" type="checkbox" value="{{ question.id }}">{{ question.text }}</input>
+                        <input name="questions" type="checkbox" value="{{ question.id }}"> {{ question.text }}</input>
                     </div>
                     {% endfor %}
 

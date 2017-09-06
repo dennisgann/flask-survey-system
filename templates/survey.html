@@ -35,8 +35,9 @@
                         {% for response in question.responses %}
                         <input name="{{ question.id }}" type="radio" value="{{ loop.index }}"> {{ response }}</input><br>
                         {% endfor %}
+                        <br>
                     {% endfor %}
-                    <br><button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
+                    <button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
                 </fieldset>
             </form>
            {%else%}

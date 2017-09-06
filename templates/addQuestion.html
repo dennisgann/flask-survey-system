@@ -57,7 +57,7 @@
 
 
             <form class="pure-form pure-form-aligned" method="POST">
-                <fieldset>
+                <fieldset id="formFields">
                     <div class="pure-control-group">
                         <label>Question text</label>
                         <textarea class="pure-input-1-2" name="question" placeholder="Question text"></textarea>
@@ -66,26 +66,19 @@
                     <br>
                     <div class="pure-control-group">
                         <label>Response 1</label>
-                        <input class="pure-input-1-2" name="responses" value="Strongly disagree"/>
+                        <input class="pure-input-1-2" name="responses"/>
                         <span class="pure-form-message-inline">* required</span>
                     </div>
-                    <div class="pure-control-group">
+                    <div id="clone" class="pure-control-group">
                         <label>Response 2</label>
-                        <input class="pure-input-1-2" name="responses" value="Disagree"/>
+                        <input class="pure-input-1-2" name="responses"/>
                         <span class="pure-form-message-inline">* required</span>
                     </div>
-                    <div class="pure-control-group">
-                        <label>Response 3</label>
-                        <input class="pure-input-1-2" name="responses" value="Neutral"/>
+                    <div id="addInput" class="pure-control-group">
+                        <label></label>
+                        <a class="pure-button" onclick="addInput()"><i class="fa fa-plus"></i></a>
                     </div>
-                    <div class="pure-control-group">
-                        <label>Response 4</label>
-                        <input class="pure-input-1-2" name="responses" value="Agree"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label>Response 5</label>
-                        <input class="pure-input-1-2" name="responses" value="Strongly agree"/>
-                    </div>
+
                     <div class="pure-controls">
                         <button type="submit" name="bt" class="pure-button pure-button-primary">Add question</button>
                     </div>
@@ -97,4 +90,21 @@
     </div>
 
 </body>
+
+<script>
+    var number = 3;
+    function addInput(){
+
+        var container = document.getElementById("formFields");
+        var div = document.getElementById("clone").cloneNode(true);
+        div.children[0].innerHTML = "Response " + number;
+        div.children[1].value = "";
+        div.removeChild(div.children[2]);
+
+        container.insertBefore(div, document.getElementById("addInput"));
+
+        number++;
+    }
+</script>
+
 </html>
