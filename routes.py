@@ -180,9 +180,9 @@ def survey(sid):
 
     if request.method == "POST":
 
-        responses = list(request.form.values())
+        responses = list(request.form.values())[:-1]
 
-        if len(responses) - 1 != len(survey.questions):
+        if len(responses) != len(survey.questions):
             return render_template("survey.html", survey=survey, error=1)
 
         if write_response(sid, responses):
