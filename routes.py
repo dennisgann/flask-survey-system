@@ -5,7 +5,7 @@ from server import app
 import time
 
 from models import Question, Survey, QuestionStore, SurveyStore
-from functions import check_login, check_password, check_data, get_courses
+from functions import check_login, check_password, check_data, get_courses, write_response
 
 
 ##ROUTES
@@ -29,6 +29,7 @@ def index():
         return render_template("login.html", error=1)
 
     return render_template("login.html")
+
 
 #questions route - displays question pool
 @app.route("/questions")
@@ -90,6 +91,7 @@ def addQuestion():
             return render_template("addQuestion.html", error=2)
 
     return render_template("addQuestion.html")
+
 
 #displays surveys - both active and inactive
 @app.route("/surveys")
@@ -161,11 +163,13 @@ def createSurvey():
 
 
 #survey page (public) - allows reponses to be collected
-@app.route("/survey/<sid>")
+@app.route("/survey/<sid>", methods=["GET", "POST"])
 def survey(sid):
     check_data();
 
     survey = SurveyStore().find(sid)
+
+    if not survey: return render_template("survey.html", survey=survey, error=3)
 
     questions = []
 
@@ -174,7 +178,20 @@ def survey(sid):
 
     survey.questions = questions
 
-    return render_template("survey.html", survey=survey)
+    if request.method == "POST":
+
+        responses = list(request.form.values())
+
+        if len(responses) - 1 != len(survey.questions):
+            return render_template("survey.html", survey=survey, error=1)
+
+        if write_response(sid, responses):
+            return render_template("survey.html", survey=survey, success=1)
+        else:
+            return render_template("survey.html", survey=survey, error=2)
+
+    else:
+        return render_template("survey.html", survey=survey)
 
 
 #logout - destroys session and redirects to index/login

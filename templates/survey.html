@@ -23,10 +23,18 @@
         </div>
         <div class="content">
 
-            {% if survey.state == '1' %}
+
+            {% if error == 3 %}<p style="color: red;">The survey you have requested does not exist. Please check your link is correct.</p>
+            {% elif success %}<p style="color: green;">Your response has been recorded successfully.</p>
+
+            {% elif survey.state == '1' %}
 
             <h2 class="content-subhead"><i class="fa fa-comment"></i> Please complete the survey below</h2>
             <p>Your feedback is greatly appreciated.</p><br>
+
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>
+            {% elif error == 1 %}<p style="color: red;">Please complete all survey questions.</p>
+            {% elif error == 2 %}<p style="color: red;">An error occured whilst recording your response. Please try again later.</p>{% endif %}
 
             <form class="pure-form pure-form-stacked" method="POST">
                 <fieldset>

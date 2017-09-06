@@ -41,3 +41,13 @@ def get_courses():
             if row:
                 courses.append(row)
     return courses
+
+
+##write survey responses
+def write_response(sid, response):
+    with open('data/' + sid + '.csv','a') as csv_out:
+        writer = csv.writer(csv_out)
+        writer.writerow(response)
+        return 1 #success
+
+    return 0 #failure
