@@ -1,3 +1,7 @@
+##pyChart - UNSW COMP1531 17s2 Group Project
+##Created by Frank Foo, Dennis Gann and Charmaine Leung
+
+
 import os.path, csv
 from flask import session
 

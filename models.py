@@ -1,6 +1,11 @@
+##pyChart - UNSW COMP1531 17s2 Group Project
+##Created by Frank Foo, Dennis Gann and Charmaine Leung
+
 from abc import abstractmethod
 import csv
 
+
+#abstract object class
 class Object():
 
     def __init__(self, oid, state):
@@ -24,6 +29,7 @@ class Object():
         self._state = state
 
 
+#abstract object store class
 class ObjectStore():
 
     def __init__(self):
@@ -89,7 +95,10 @@ class ObjectStore():
         pass
 
 
+#question object class, extends object
 class Question(Object):
+
+    #constructor
     def __init__(self,qid,state,text,responses):
         Object.__init__(self, qid, state)
         self._text = text
@@ -113,14 +122,17 @@ class Question(Object):
         self._responses = responses
 
 
-
+#survey object class, extends object
 class Survey(Object):
+
+    #constructor
     def __init__(self, sid, state, name, course, questions):
         Object.__init__(self, sid, state)
         self._name = name
         self._course = course
         self._questions = questions
 
+    ##properties
     @property
     def name(self):
         return self._name
@@ -146,12 +158,13 @@ class Survey(Object):
         self._questions = questions
 
 
-
+#question store class, extends object store
 class QuestionStore(ObjectStore):
 
     def __init__(self):
         ObjectStore.__init__(self)
 
+    #loads questions from csv to store
     def load(self):
         del self._data[:] #clears list
 
@@ -165,7 +178,7 @@ class QuestionStore(ObjectStore):
 
         return 0 #failure
 
-
+    #saves questions in store to csv
     def save(self):
         with open('data/questions.csv','w') as csv_out:
             writer = csv.writer(csv_out)
@@ -177,11 +190,13 @@ class QuestionStore(ObjectStore):
         return 0 #failure
 
 
+#survey store class, extends object store
 class SurveyStore(ObjectStore):
 
     def __init__(self):
         ObjectStore.__init__(self)
 
+    #loads surveys from csv to store
     def load(self):
         del self._data[:] #clears list
 
@@ -195,7 +210,7 @@ class SurveyStore(ObjectStore):
 
         return 0 #failure
 
-
+    #saves surveys in store to csv
     def save(self):
         with open('data/surveys.csv','w') as csv_out:
             writer = csv.writer(csv_out)

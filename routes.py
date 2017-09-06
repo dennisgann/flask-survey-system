@@ -1,3 +1,6 @@
+##pyChart - UNSW COMP1531 17s2 Group Project
+##Created by Frank Foo, Dennis Gann and Charmaine Leung
+
 ##IMPORTS
 
 from flask import Flask, redirect, render_template, request, url_for, session
