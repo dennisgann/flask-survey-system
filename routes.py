@@ -76,6 +76,7 @@ def delQuestion(qid):
 def addQuestion():
 
     if not check_login(): return redirect(url_for('index'))
+    check_data();
 
     if request.method == "POST":
 
