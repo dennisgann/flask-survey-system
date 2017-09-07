@@ -232,9 +232,9 @@ def survey_save(sid):
     if request.method == "POST":
         response = Question(row[0], row[1], row[2], row[3:])
         with open('response.csv','a') as csv_out:
-        writer = csv.writer(csv_out)
-        writer.writerow(response)
-        return 1 
+            writer = csv.writer(csv_out)
+            writer.writerow(response)
+            return 1 
     return 0 
 
 @app.route("/logout")
