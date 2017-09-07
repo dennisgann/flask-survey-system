@@ -50,7 +50,7 @@
 
             <h2 class="content-subhead"><i class="fa fa-plus"></i> Add a new Survey</h2>
 
-            {% if success %}<p style="color: green;">Your question has been successfully added to the pool.</p>{% endif %}
+            {% if success %}<p style="color: green;">Your survey has been created successfully. It is publicly available at <a href="/survey/{{ survey.id }}" target="_blank">{{ "localhost/survey/" + survey.id }}</a></p>{% endif %}
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
             {% if error == 1 %}<p style="color: red;">Please complete all required fields.</p>{% endif %}
             {% if error == 2 %}<p style="color: red;">An error occured whilst creating your survey. Please try again later.</p>{% endif %}

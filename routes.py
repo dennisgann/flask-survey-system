@@ -157,7 +157,7 @@ def createSurvey():
         survey = Survey(surveyID, 1, surveyName, surveyCourse, surveyQs)
 
         if SurveyStore().add(survey):
-            return render_template("createSurvey.html", questions=questions, courses=courses, success=1)
+            return render_template("createSurvey.html", questions=questions, courses=courses, success=1, survey=survey)
         else:
             return render_template("createSurvey.html", questions=questions, courses=courses, error=2)
 
