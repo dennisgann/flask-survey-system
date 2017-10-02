@@ -3,6 +3,7 @@
 
 from abc import abstractmethod
 import csv
+import sqlite3
 
 
 #abstract object class
@@ -157,70 +158,6 @@ class Survey(Object):
     def questions(self,questions):
         self._questions = questions
 
-
-#question store class, extends object store
-class QuestionStore(ObjectStore):
-
-    def __init__(self):
-        ObjectStore.__init__(self)
-
-    #loads questions from csv to store
-    def load(self):
-        del self._data[:] #clears list
-
-        with open('data/questions.csv','r') as csv_in:
-            reader = csv.reader(csv_in)
-            for row in reader:
-                question = Question(row[0], row[1], row[2], row[3:])
-                self._data.append(question)
-
-            return 1 #success
-
-        return 0 #failure
-
-    #saves questions in store to csv
-    def save(self):
-        with open('data/questions.csv','w') as csv_out:
-            writer = csv.writer(csv_out)
-            for question in self._data:
-                writer.writerow([question.id, question.state, question.text] + question.responses)
-
-            return 1 #success
-
-        return 0 #failure
-
-
-#survey store class, extends object store
-class SurveyStore(ObjectStore):
-
-    def __init__(self):
-        ObjectStore.__init__(self)
-
-    #loads surveys from csv to store
-    def load(self):
-        del self._data[:] #clears list
-
-        with open('data/surveys.csv','r') as csv_in:
-            reader = csv.reader(csv_in)
-            for row in reader:
-                survey = Survey(row[0], row[1], row[2], row[3], row[4:])
-                self._data.append(survey)
-
-            return 1 #success
-
-        return 0 #failure
-
-    #saves surveys in store to csv
-    def save(self):
-        with open('data/surveys.csv','w') as csv_out:
-            writer = csv.writer(csv_out)
-            for survey in self._data:
-                writer.writerow([survey.id, survey.state, survey.name, survey.course] + survey.questions)
-
-            return 1 #success
-
-        return 0 #failure
-        
 #user class
 class User:
     
@@ -260,7 +197,7 @@ class Admin(User):
     pass
 
 #staff subclass
-class Admin(User):
+class Staff(User):
     
     #constructor
     def __init__(self, zid, name, password, course, semester):
@@ -311,3 +248,46 @@ class Student(User):
     def semester(self,semester):
         self._semester = semester
 
+#saving questions
+
+def save_question(question):
+
+    conn = sqlite3.connect('pychart.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO questions VALUES (?,?,?,?)", (question.qid, question.state, question.text, question.responses))  
+    
+    conn.commit()
+    conn.close()  
+
+#saving surveys
+
+def save_survey(survey):
+
+    conn = sqlite3.connect('pychart.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO surveys VALUES (?,?,?,?,?)", (survey.sid, survey.state, survey.name, survey.course, survey.questions)) 
+    
+    conn.commit()
+    conn.close()   
+
+#saving staff
+
+def save_staff(staff):
+
+    conn = sqlite3.connect('pychart.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO staff VALUES (?,?,?,?,?)", (staff.zid, staff.name, staff.password, staff.course, staff.semester)) 
+    
+    conn.commit()
+    conn.close()  
+    
+#saving students
+
+def save_student(student):
+
+    conn = sqlite3.connect('pychart.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO student VALUES (?,?,?,?,?)", (student.zid, student.name, student.password, student.course, student.semester)) 
+    
+    conn.commit()
+    conn.close()  
