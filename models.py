@@ -220,3 +220,94 @@ class SurveyStore(ObjectStore):
             return 1 #success
 
         return 0 #failure
+        
+#user class
+class User:
+    
+    #constructor
+    def __init__(self,zid, name, password):
+        self._zid = zid
+        self._name = name
+        self._password = password
+        
+    ##properties
+    @property
+    def zid(self):
+        return self._zid
+
+    @zid.setter
+    def zid(self,zid):
+        self._zid = zid
+        
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self,name):
+        self._name = name
+    
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self,password):
+        self._password = password      
+          
+#admin subclass
+class Admin(User):
+    pass
+
+#staff subclass
+class Admin(User):
+    
+    #constructor
+    def __init__(self, zid, name, password, course, semester):
+        super().__init__(zid, name, password)
+        self._course = course
+        self._semester = semester
+    
+    ##properties
+    @property
+    def course(self):
+        return self._course
+
+    @course.setter
+    def course(self,course):
+        self._course = course
+    
+    @property
+    def semester(self):
+        return self._semester
+
+    @semester.setter
+    def semester(self,semester):
+        self._semester = semester
+        
+#student subclass
+class Student(User):
+
+    #constructor
+    def __init__(self, id, name, password, course, semester):
+        super().__init__(zid, name, password)
+        self._course = course
+        self._semester = semester
+
+    ##properties
+    @property
+    def course(self):
+        return self._course
+
+    @course.setter
+    def course(self,course):
+        self._course = course
+    
+    @property
+    def semester(self):
+        return self._semester
+
+    @semester.setter
+    def semester(self,semester):
+        self._semester = semester
+
