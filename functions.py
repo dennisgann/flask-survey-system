@@ -23,17 +23,7 @@ def check_login():
         return False
 
 
-##csv file check function
-def check_data():
-    if not os.path.isfile("data/questions.csv"):
-        with open("data/questions.csv", "w") as q_csv:
-            pass
-    if not os.path.isfile("data/surveys.csv"):
-        with open("data/surveys.csv", "w") as s_csv:
-            pass
-    if not os.path.isfile("data/courses.csv"):
-        with open("data/courses.csv", "w") as c_csv:
-            pass
+
 
 
 ##get courses from csv

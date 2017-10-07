@@ -4,11 +4,12 @@
 ##IMPORTS
 
 from flask import Flask, redirect, render_template, request, url_for, session
-from server import app
+from server import app, db
 import time
 
 from models import Question, Survey, QuestionStore, SurveyStore
-from functions import check_login, check_password, check_data, get_courses, write_response
+from functions import get_courses, write_response
+from models2 import User, Course, Enrolment, Question, Survey, Response, SurveySystem
 
 
 ##ROUTES
@@ -17,7 +18,7 @@ from functions import check_login, check_password, check_data, get_courses, writ
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    if check_login():
+    if SurveySystem.check_login():
         return render_template("dashboard.html")
 
 
@@ -25,8 +26,8 @@ def index():
         username = request.form["username"]
         password = request.form["password"]
 
-        if check_password(username, password):
-            session['logged_in'] = True
+
+        if SurveySystem.authenticate(username, password):
             return render_template("dashboard.html")
 
         return render_template("login.html", error=1)
