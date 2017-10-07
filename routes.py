@@ -7,10 +7,9 @@ from flask import Flask, redirect, render_template, request, url_for, session
 from server import app, db
 import time
 
-from models import Question, Survey, QuestionStore, SurveyStore
-from functions import get_courses, write_response
-from models2 import User, Course, Enrolment, Question, Survey, Response, SurveySystem
+from models import User, Course, Enrolment, Question, Survey, Response, SurveySystem
 
+system = SurveySystem()
 
 ##ROUTES
 
@@ -18,7 +17,7 @@ from models2 import User, Course, Enrolment, Question, Survey, Response, SurveyS
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    if SurveySystem.check_login():
+    if system.check_login():
         return render_template("dashboard.html")
 
 
@@ -27,7 +26,7 @@ def index():
         password = request.form["password"]
 
 
-        if SurveySystem.authenticate(username, password):
+        if system.authenticate(username, password):
             return render_template("dashboard.html")
 
         return render_template("login.html", error=1)
@@ -39,10 +38,9 @@ def index():
 @app.route("/questions")
 def questions():
 
-    if not check_login(): return redirect(url_for('index'))
-    check_data();
+    if not system.check_login(): return redirect(url_for('index'))
 
-    questions = QuestionStore().active
+    questions = Question.query.filter_by(state = 1).all()
 
     if request.args.get('delete'):
         if request.args.get('delete') == '1':
@@ -57,8 +55,7 @@ def questions():
 @app.route("/questions/delete/<qid>")
 def delQuestion(qid):
 
-    if not check_login(): return redirect(url_for('index'))
-    check_data();
+    if not system.check_login(): return redirect(url_for('index'))
 
     delete = 0
 
@@ -76,21 +73,20 @@ def delQuestion(qid):
 @app.route("/questions/add", methods=["GET", "POST"])
 def addQuestion():
 
-    if not check_login(): return redirect(url_for('index'))
-    check_data();
+    if not system.check_login(): return redirect(url_for('index'))
 
     if request.method == "POST":
 
-        qID =  str(int(time.time()))
         qText = request.form["question"]
+        qType = 1
+        required = 1
         responses = list(filter(None, request.form.getlist("responses")))
 
         if qText.isspace() or qText == "" or len(responses) < 2 or all(responses[i].isspace() for i in range(0, len(responses)-1)):
             return render_template("addQuestion.html", error=1)
 
-        question = Question(qID,1,qText,responses)
 
-        if QuestionStore().add(question):
+        if system.add_question(qText, qType, required, responses):
             return render_template("addQuestion.html", success=1)
         else:
             return render_template("addQuestion.html", error=2)
@@ -102,8 +98,7 @@ def addQuestion():
 @app.route("/surveys")
 def surveys():
 
-    if not check_login(): return redirect(url_for('index'))
-    check_data();
+    if not system.check_login(): return redirect(url_for('index'))
 
     active_surveys = SurveyStore().active
     inactive_surveys = SurveyStore().inactive
@@ -121,8 +116,7 @@ def surveys():
 @app.route("/surveys/close/<sid>")
 def closeSurvey(sid):
 
-    if not check_login(): return redirect(url_for('index'))
-    check_data();
+    if not system.check_login(): return redirect(url_for('index'))
 
     close = 0
 
@@ -140,8 +134,7 @@ def closeSurvey(sid):
 @app.route("/surveys/create", methods=["GET", "POST"])
 def createSurvey():
 
-    if not check_login(): return redirect(url_for('index'))
-    check_data();
+    if not system.check_login(): return redirect(url_for('index'))
 
     questions = QuestionStore().active
     courses = get_courses()
@@ -170,7 +163,6 @@ def createSurvey():
 #survey page (public) - allows reponses to be collected
 @app.route("/survey/<sid>", methods=["GET", "POST"])
 def survey(sid):
-    check_data();
 
     survey = SurveyStore().find(sid)
 
@@ -203,5 +195,8 @@ def survey(sid):
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
+    session['username'] = ""
+    session['user_id'] = ""
+    session['user_type'] = 0
     session.clear()
     return redirect(url_for("index"))

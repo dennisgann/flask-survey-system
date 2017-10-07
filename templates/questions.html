@@ -63,9 +63,7 @@
                </thead>
                <tbody>
                    {% for question in questions %}
-                   {% if question.state == '1' %}
-                   <tr><td>{{ question.text }}</td><td>{% for response in question.responses %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
-                   {% endif %}
+                   <tr><td>{{ question.text }}</td><td>{% for response in question.responsesList() %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
                    {% endfor %}
                </tbody>
            </table>
