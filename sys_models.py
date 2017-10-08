@@ -54,8 +54,11 @@ class SurveySystem():
         db.session.commit()
         return 1 #success
 
-    def create_user(self, username, password, type):
-        newU = User(username=str.lower(username), password=generate_password_hash(password), type=type)
+
+    def create_user(self, uid, username, password, type):
+        if User.query.filter_by(id=uid).first():
+            return 0 #failure: user with same id already exists
+        newU = User(id=uid, username=str.lower(username), password=generate_password_hash(password), type=type)
         db.session.add(newU)
         db.session.commit()
         return 1 #success
