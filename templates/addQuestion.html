@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
     <title>pyChart Survey System :: Add Question</title>
 
@@ -57,35 +56,51 @@
 
 
             <form class="pure-form pure-form-aligned" method="POST">
-                <fieldset>
+                <fieldset id="formFields">
                     <div class="pure-control-group">
                         <label>Question text</label>
                         <textarea class="pure-input-1-2" name="question" placeholder="Question text"></textarea>
                         <span class="pure-form-message-inline">* required</span>
                     </div>
+                    <div class="pure-control-group">
+                        <label>Optional</label>
+                        <input type="radio" name="optional" value="1"> Yes &nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="optional" value="0" checked> No
+                    </div>
+                    <div class="pure-control-group">
+                        <label>Question type</label>
+                        <input type="radio" name="type" value="MCQ" onchange="hideText()" checked> Multiple Choice &nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="type" value="Text" onchange="hideMCQ()"> Text
+                    </div>
+
                     <br>
-                    <div class="pure-control-group">
-                        <label>Response 1</label>
-                        <input class="pure-input-1-2" name="responses" value="Strongly disagree"/>
-                        <span class="pure-form-message-inline">* required</span>
+                    <div id="MCQ">
+                        <div id="1" class="pure-control-group">
+                            <label>Response 1</label>
+                            <input class="pure-input-1-2" name="responses"/>
+                            <span class="pure-form-message-inline">* required</span>
+                        </div>
+                        <div id="2" class="pure-control-group">
+                            <label>Response 2</label>
+                            <input class="pure-input-1-2" name="responses"/>
+                            <span class="pure-form-message-inline">* required</span>
+                        </div>
+                        <div id="addInput" class="pure-control-group">
+                            <label></label>
+                            <a class="pure-button" onclick="addInput()"><i class="fa fa-plus"></i></a>
+                            <a class="pure-button" onclick="yesNo()">Yes/No</a>
+                            <a class="pure-button" onclick="likert()">Likert scale</a>
+                            <a class="pure-button" onclick="resetForm()">Reset</a>
+                        </div>
                     </div>
-                    <div class="pure-control-group">
-                        <label>Response 2</label>
-                        <input class="pure-input-1-2" name="responses" value="Disagree"/>
-                        <span class="pure-form-message-inline">* required</span>
+
+                    <div id="TEXT" style="display:none;">
+                        <div class="pure-control-group">
+                            <label>Response</label>
+                            <input class="pure-input-1-2" placeholder="Free response field" disabled/>
+                        </div>
                     </div>
-                    <div class="pure-control-group">
-                        <label>Response 3</label>
-                        <input class="pure-input-1-2" name="responses" value="Neutral"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label>Response 4</label>
-                        <input class="pure-input-1-2" name="responses" value="Agree"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label>Response 5</label>
-                        <input class="pure-input-1-2" name="responses" value="Strongly agree"/>
-                    </div>
+
                     <div class="pure-controls">
                         <button type="submit" name="bt" class="pure-button pure-button-primary">Add question</button>
                     </div>
@@ -97,4 +112,70 @@
     </div>
 
 </body>
+
+<script>
+    var number = 3;
+    function addInput(){
+
+        var container = document.getElementById("MCQ");
+        var div = document.getElementById("2").cloneNode(true);
+        div.id = "clone"+number;
+        div.children[0].innerHTML = "Response " + number;
+        div.children[1].value = "";
+        div.removeChild(div.children[2]);
+
+        container.insertBefore(div, document.getElementById("addInput"));
+
+        number++;
+    }
+
+    function yesNo(){
+
+        var rem = document.querySelectorAll("[id*='clone']");
+        for (var i = 0; i < rem.length; i++)
+            rem[i].parentNode.removeChild(rem[i]);
+        document.getElementById("1").children[1].value = "Yes";
+        document.getElementById("2").children[1].value = "No";
+
+        number = 3;
+    }
+
+    function likert(){
+
+        yesNo();
+        addInput();
+        addInput();
+        addInput();
+        document.getElementById("1").children[1].value = "Strongly agree";
+        document.getElementById("2").children[1].value = "Agree";
+        document.getElementById("clone3").children[1].value = "Neutral";
+        document.getElementById("clone4").children[1].value = "Disagree";
+        document.getElementById("clone5").children[1].value = "Strongly disagree";
+
+    }
+
+    function resetForm(){
+
+        yesNo();
+        document.getElementById("1").children[1].value = "";
+        document.getElementById("2").children[1].value = "";
+
+    }
+
+    function hideMCQ(){
+
+        document.getElementById("MCQ").style.display = "none"
+        document.getElementById("TEXT").style.display = "initial";
+
+    }
+
+    function hideText(){
+
+        resetForm();
+        document.getElementById("MCQ").style.display = "initial"
+        document.getElementById("TEXT").style.display = "none";
+
+    }
+</script>
+
 </html>

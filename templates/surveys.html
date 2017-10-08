@@ -4,7 +4,6 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
    <title>pyChart Survey System :: View Surveys</title>
 
@@ -47,48 +46,58 @@
 
        <div class="content">
 
+           {% if error == 0 %}<br><p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+           {% if error == 1 %}<br><p style="color: red;">The survey could not be closed. Please try again later.</p>{% endif %}
+           {% if success %}<br><p style="color: green;">The survey has been closed successfully.</p>{% endif %}
 
-           {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+
+           <h2 class="content-subhead"><i class="fa fa-hourglass-half"></i> Pending Surveys</h2>
+
+           {% if draft_surveys %}
+           <table class="pure-table pure-table-horizontal">
+               <thead>
+                   <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
+               </thead>
+               {% for survey in draft_surveys %}
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button" href="surveys/close/{{ survey.id }}"><i class="fa fa-ban"></i> Close</a></td></tr>
+
+            {% endfor %}
+           </table>
+           {% else %}
+           <p>There are no surveys pending review. Please create a survey first.</p>
+           {% endif %}
+
 
            <h2 class="content-subhead"><i class="fa fa-eye"></i> Active Surveys</h2>
-
-           {% if error == 1 %}<p style="color: red;">The survey could not be closed. Please try again later.</p>{% endif %}
-           {% if success %}<p style="color: green;">The survey has been closed successfully.</p>{% endif %}
-
-
 
            {% if active_surveys %}
            <table class="pure-table pure-table-horizontal">
                <thead>
-                   <tr><th>Name</th><th>Course</th><th>Link</th><th></th></tr>
+                   <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
                </thead>
                {% for survey in active_surveys %}
-               {% if survey.state == "1" %}
-               <tr><td>{{ survey.name }}</td><td>{{ survey.course }}</td><td><a href="survey/{{ survey.id }}" target="_blank">{{ request.url_root + "survey/" + survey.id }}</a></td><td><a class="pure-button" href="surveys/close/{{ survey.id }}"><i class="fa fa-ban"></i></a></td></tr>
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button pure-button-disabled" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a>&nbsp;<a class="pure-button" href="surveys/close/{{ survey.id }}"><i class="fa fa-ban"></i> Close</a></td></tr>
 
-            {% endif %}
             {% endfor %}
            </table>
            {% else %}
-           <p>There are no active surveys. Please create a survey first.</p>
+           <p>There are no active surveys.</p>
            {% endif %}
 
 
-           <h2 class="content-subhead"><i class="fa fa-eye-slash"></i> Inactive Surveys</h2>
+           <h2 class="content-subhead"><i class="fa fa-eye-slash"></i> Closed Surveys</h2>
 
            {% if inactive_surveys %}
            <table class="pure-table pure-table-horizontal">
                <thead>
-                   <tr><th>Name</th><th>Course</th><th></th></tr>
+                   <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
                </thead>
                {% for survey in inactive_surveys %}
-               {% if survey.state == "0" %}
-               <tr><td>{{ survey.name }}</td><td>{{ survey.course }}</td><td><a class="pure-button pure-button-disabled" href="#"><i class="fa fa-pie-chart"></i></a></td></tr>
-               {% endif %}
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button pure-button-disabled" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a></td></tr>
                {% endfor %}
            </table>
            {% else %}
-           <p>There are no inactive surveys.</p>
+           <p>There are no closed surveys.</p>
            {% endif %}
 
         </div>

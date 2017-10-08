@@ -1,244 +1,281 @@
+##pyChart - UNSW COMP1531 17s2 Group Project
+##Created by Frank Foo, Dennis Gann and Charmaine Leung
+
+##IMPORTS
 from flask import Flask, redirect, render_template, request, url_for, session
-import csv, time
-from server import app
-from Question import Question
-from Survey import Survey
+from server import app, db
 
-##login
-users = {"admin": "password"}
+from data_models import User, Course, Enrolment, Question, Survey, Response
+from sys_models import SurveySystem
 
-def check_password(user_name, password):
-    if users.get(user_name) == password:
-        return True
-    return False
+system = SurveySystem()
 
+##ROUTES
 
-##routes
+#index route - login or redirect to dashboard
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    if session.get('logged_in'):
-        return render_template("dashboard.html")
+    if system.check_login() == 1:
+        enrolments = Enrolment.query.filter_by(u_id=session['user_id']).all()
+        open_surveys = system.get_open_surveys()
+        closed_surveys = system.get_closed_surveys()
+        return render_template("studentDashboard.html", enrolments=enrolments, active_surveys=open_surveys, inactive_surveys=closed_surveys)
+
+    elif system.check_login() == 2:
+        enrolments = Enrolment.query.filter_by(u_id=session['user_id']).all()
+        draft_surveys = system.get_draft_surveys()
+        closed_surveys = system.get_closed_surveys()
+        return render_template("staffDashboard.html", enrolments=enrolments, draft_surveys=draft_surveys, inactive_surveys=closed_surveys)
+
+    elif system.check_login() == 3:
+        return render_template("adminDashboard.html")
+
 
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        if check_password(username, password):
-            session['logged_in'] = True
-            return render_template("dashboard.html")
+        if system.authenticate(username, password):
+            return redirect(url_for("index"))
 
         return render_template("login.html", error=1)
 
     return render_template("login.html")
 
+
+#questions route - displays question pool
 @app.route("/questions")
 def questions():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    questions = []
+    if not system.check_login() == 3: return redirect(url_for('index'))
 
-    with open('questions.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[1] == '1':
-              question = Question(row[0], row[1], row[2], row[3:])
-              questions.append(question)
+    mandatory_questions = Question.query.filter_by(state = 1, required = 1).all()
+    optional_questions = Question.query.filter_by(state = 1, required = 0).all()
 
     if request.args.get('delete'):
         if request.args.get('delete') == '1':
-            return render_template("questions.html", questions=questions, success=1)
+            return render_template("questions.html", mandatory_questions=mandatory_questions, optional_questions=optional_questions, success=1)
         else:
-            return render_template("questions.html", questions=questions, error=1)
+            return render_template("questions.html", mandatory_questions=mandatory_questions, optional_questions=optional_questions, error=1)
     else:
-        return render_template("questions.html", questions=questions)
+        return render_template("questions.html", mandatory_questions=mandatory_questions, optional_questions=optional_questions)
 
+
+#delete question - deletest question from pool and redirects back to questions
 @app.route("/questions/delete/<qid>")
 def delQuestion(qid):
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    questions = []
+    if not system.check_login() == 3: return redirect(url_for('index'))
+
     delete = 0
+    delQuestion = Question.query.filter_by(id=qid).first()
 
-    with open('questions.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[0] == qid and row[1] == '1':
-              question = Question(row[0], 0, row[2], row[3:])
-              questions.append(question)
-              delete = 1
-          else:
-              question = Question(row[0], row[1], row[2], row[3:])
-              questions.append(question)
-
-
-    with open('questions.csv', "w") as csv_out:
-        csv_out.truncate()
-
-    for question in questions:
-        question.write()
+    if delQuestion:
+        if system.update_question(qid, delQuestion.text, 0, delQuestion.type, \
+        delQuestion.required, delQuestion.responses):
+            delete = 1
 
     return redirect(url_for("questions", delete=delete))
 
+
+#add question - adds question to pool
 @app.route("/questions/add", methods=["GET", "POST"])
 def addQuestion():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
+
+    if not system.check_login() == 3: return redirect(url_for('index'))
 
     if request.method == "POST":
 
-        qID =  str(int(time.time()))
         qText = request.form["question"]
         responses = list(filter(None, request.form.getlist("responses")))
+        qType = 1
+        if request.form["type"] == 'Text':
+            qType = 2
+            responses = []
+        required = 1
+        if request.form['optional'] == '1':
+            required = 0
 
-        if qText.isspace() or qText == "" or len(responses) < 2 or all(responses[i].isspace() for i in range(0, len(responses)-1)):
+        if qText.isspace() or qText == "" or qType == 1 and (len(responses) < 2 or all(responses[i].isspace() for i in range(0, len(responses)-1))):
             return render_template("addQuestion.html", error=1)
 
-        question = Question(qID,1,qText,responses)
 
-        if question.write():
+        if system.add_question(qText, qType, required, responses):
             return render_template("addQuestion.html", success=1)
         else:
             return render_template("addQuestion.html", error=2)
 
-
     return render_template("addQuestion.html")
 
+
+#displays surveys - both active and inactive
 @app.route("/surveys")
 def surveys():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    active_surveys = []
-    inactive_surveys = []
+    if not system.check_login() == 3: return redirect(url_for('index'))
 
-    with open('surveys.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-              survey = Survey(row[0], row[1], row[2], row[3], [])
-              if survey.state == '1':
-                  active_surveys.append(survey)
-              else:
-                  inactive_surveys.append(survey)
+    draft_surveys = system.get_draft_surveys()
+    active_surveys = system.get_open_surveys()
+    inactive_surveys = system.get_closed_surveys()
 
     if request.args.get('close'):
         if request.args.get('close') == '1':
-            return render_template("surveys.html", active_surveys=active_surveys, inactive_surveys=inactive_surveys, success=1)
+            return render_template("surveys.html", draft_surveys=draft_surveys, active_surveys=active_surveys, inactive_surveys=inactive_surveys, success=1)
         else:
-            return render_template("surveys.html", active_surveys=active_surveys, inactive_surveys=inactive_surveys, error=1)
+            return render_template("surveys.html", draft_surveys=draft_surveys, active_surveys=active_surveys, inactive_surveys=inactive_surveys, error=1)
     else:
-        return render_template("surveys.html", active_surveys=active_surveys, inactive_surveys=inactive_surveys)
+        return render_template("surveys.html", draft_surveys=draft_surveys, active_surveys=active_surveys, inactive_surveys=inactive_surveys)
 
 
+#close survey - makes survey inactive and redirects to surveys page
 @app.route("/surveys/close/<sid>")
 def closeSurvey(sid):
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
 
-    surveys = []
+    if not system.check_login() == 3: return redirect(url_for('index'))
+
     close = 0
 
-    with open('surveys.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[0] == sid and row[1] == '1':
-              survey = Survey(row[0], 0, row[2], row[3], [])
-              surveys.append(survey)
-              close = 1
-          else:
-              survey = Survey(row[0], row[1], row[2], row[3], [])
-              surveys.append(survey)
+    closeSurvey = Survey.query.filter_by(id=sid).first()
 
-
-    with open('surveys.csv', "w") as csv_out:
-        csv_out.truncate()
-
-    for survey in surveys:
-        survey.write()
+    if closeSurvey:
+        if system.update_survey(sid, closeSurvey.name, closeSurvey.c_id, 0, closeSurvey.questions):
+            close = 1
 
     return redirect(url_for("surveys", close=close))
 
 
+#review survey
+@app.route("/surveys/review/<sid>", methods=["GET", "POST"])
+def reviewSurvey(sid):
 
-@app.route("/surveys/create", methods=["GET", "POST"])
-def createSurvey():
-    if not session.get('logged_in'):
-        return redirect(url_for("index"))
+    if not system.check_login() == 2: return redirect(url_for('index'))
+
+    course_ids = [r[0] for r in Enrolment.query.filter_by(u_id=session['user_id']).with_entities(Enrolment.c_id).all()]
+
+    survey = Survey.query.filter_by(id=sid).first()
+
+    if not survey: return render_template("review.html", error=3)
+
+    if survey.c_id not in course_ids:
+        return redirect(url_for('index'))
 
     questions = []
+    for questionID in survey.questionsList():
+        questions.append(system.find_question(questionID))
 
-    with open('questions.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      for row in reader:
-          if row[1] == '1':
-              question = Question(row[0], row[1], row[2], row[3:])
-              questions.append(question)
+    optional_questions = Question.query.filter(Question.id.notin_(survey.questionsList())).filter_by(state = 1, required = 0).all()
 
-    courses = []
+    if request.method == "POST":
 
-    with open('courses.csv','r') as csv_in:
-        reader = csv.reader(csv_in)
-        next(reader)
-        for row in reader:
-            if row:
-                courses.append(row)
+        s_questions = survey.questionsList()
+        for question in optional_questions:
+            response = request.form.get(str(question.id))
+            if response:
+                s_questions.append(response)
 
+
+        if system.update_survey(sid, survey.name, survey.c_id, 2, s_questions):
+            return render_template("review.html", survey=survey, questions=questions, optional_questions=optional_questions, success=1)
+        else:
+            return render_template("review.html", survey=survey, questions=questions, optional_questions=optional_questions, error=0)
+
+    else:
+        return render_template("review.html", survey=survey, questions=questions, optional_questions=optional_questions)
+
+
+#create survey - captures input a creats a new survey object in SurveyStore
+@app.route("/surveys/create", methods=["GET", "POST"])
+def createSurvey():
+
+    if not system.check_login() == 3: return redirect(url_for('index'))
+
+    questions = Question.query.filter_by(state = 1).all()
+    courses = Course.query.all()
 
     if request.method == "POST":
 
         surveyName = request.form["name"]
         surveyCourse = request.form["course"]
         surveyQs = request.form.getlist("questions")
-        surveyID =  str(int(time.time()))
-        survey = Survey(surveyID, 1, surveyName, surveyCourse, surveyQs)
 
-        if surveyName.isspace() or surveyName == "" or not surveyQs:
+        if surveyName.isspace() or surveyName == "" or not surveyQs or not surveyCourse:
             return render_template("createSurvey.html", questions=questions, courses=courses, error=1)
 
-        if survey.write():
+
+        if system.create_survey(surveyName, surveyCourse, surveyQs):
             return render_template("createSurvey.html", questions=questions, courses=courses, success=1)
         else:
             return render_template("createSurvey.html", questions=questions, courses=courses, error=2)
 
+    else:
+        return render_template("createSurvey.html", questions=questions, courses=courses)
 
-    return render_template("createSurvey.html", questions=questions, courses=courses)
 
-
-@app.route("/survey/<sid>")
+#survey page - allows responses to be collected
+@app.route("/survey/<sid>", methods=["GET", "POST"])
 def survey(sid):
 
-    with open('surveys/' + sid + '.csv','r') as csv_in:
-      reader = csv.reader(csv_in)
-      row1 = next(reader)
-      row2 = next(reader)
-      questions = []
-      with open('questions.csv','r') as csv_in:
-        reader = csv.reader(csv_in)
-        for row in reader:
-            if row[0] in row2:
-                question = Question(row[0], row[1], row[2], row[3:])
-                questions.append(question)
+    if not system.check_login() == 1: return redirect(url_for('index'))
+    #check whether student is enrolled in course and hasn't already taken survey
+    course_ids = [r[0] for r in Enrolment.query.filter_by(u_id=session['user_id']).with_entities(Enrolment.c_id).all()]
 
-      survey = Survey(sid,'1',row1[1],row1[2],questions)
+    survey = Survey.query.filter_by(id=sid).first()
 
-      return render_template("survey.html", survey=survey)
+    if survey.c_id not in course_ids:
+        return redirect(url_for('index'))
 
-#Save user responses to response.csv
-# Not sure where to put this, seperate @app.route? 
-@app.route("/survey/<sid>/save", methods=["GET", "POST"])
-def survey_save(sid):
+    if not survey: return render_template("survey.html", error=3)
+
+    if Response.query.filter_by(s_id=sid, u_id=session['user_id']).first():
+        return render_template("survey.html", survey=survey, success=1)
+
+
+    questions = []
+    for questionID in survey.questionsList():
+        questions.append(system.find_question(questionID))
+
     if request.method == "POST":
-        response = Question(row[0], row[1], row[2], row[3:])
-        with open('response.csv','a') as csv_out:
-            writer = csv.writer(csv_out)
-            writer.writerow(response)
-            return 1 
-    return 0 
 
+        responses = []
+        for question in questions:
+            response = request.form.get(str(question.id))
+            if question.required and (response == None or response.isspace() or response == ""):
+                return render_template("survey.html", survey=survey, questions=questions, error=1)
+
+            if question.type == 1 and response == None:
+                response = '0'
+
+            #need to add checking of returned value for MCQ (type == 1) ie. 1 <= val <= noResponses
+
+            responses.append(response)
+
+
+        if system.save_response(sid, responses):
+            return render_template("survey.html", survey=survey, questions=questions, success=1)
+        else:
+            return render_template("survey.html", survey=survey, questions=questions, error=2)
+
+    else:
+        return render_template("survey.html", survey=survey, questions=questions)
+
+
+#results page - show survey results
+@app.route("/results/<sid>")
+def results(sid):
+    return "Not implemented yet"
+
+
+#logout - destroys session and redirects to index/login
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
+    session['username'] = ""
+    session['user_id'] = ""
+    session['user_type'] = 0
     session.clear()
+    return redirect(url_for("index"))
+
+@app.errorhandler(404)
+def page_not_found(e):
     return redirect(url_for("index"))
