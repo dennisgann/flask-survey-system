@@ -4,7 +4,6 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
    <title>pyChart Survey System :: Question Pool</title>
 
@@ -49,26 +48,42 @@
 
 
 
-           <h2 class="content-subhead"><i class="fa fa-eye"></i> Question Pool</h2>
+           {% if error == 0 %}<br><p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+           {% if error == 1 %}<br><p style="color: red;">The question could not be deleted. Please try again later.</p>{% endif %}
+           {% if success %}<br><p style="color: green;">The question has been deleted successfully.</p>{% endif %}
 
-           {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
-           {% if error == 1 %}<p style="color: red;">The question could not be deleted. Please try again later.</p>{% endif %}
-           {% if success %}<p style="color: green;">The question has been deleted successfully.</p>{% endif %}
+           <h2 class="content-subhead"><i class="fa fa-asterisk"></i> Mandatory Question Pool</h2>
 
-
-           {% if questions %}
+           {% if mandatory_questions %}
            <table class="pure-table pure-table-horizontal">
                <thead>
-                   <tr><th>Question</th><th>Responses</th><th></th></tr>
+                   <tr><th>Question</th><th>Type</th><th>Responses</th><th></th></tr>
                </thead>
                <tbody>
-                   {% for question in questions %}
-                   <tr><td>{{ question.text }}</td><td>{% for response in question.responsesList() %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
+                   {% for question in mandatory_questions %}
+                   <tr><td>{{ question.text }}</td><td>{% if question.type == 1%}MCQ</td><td>{% for response in question.responsesList() %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %} {% else %}Text</td><td>-- Free response -- {% endif %}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
                    {% endfor %}
                </tbody>
            </table>
            {% else %}
-           <p>There are no questions currently in the pool. Please add a question first.</p>
+           <p>There are no mandatory questions currently in the pool. Please add a question first.</p>
+           {% endif %}
+
+           <h2 class="content-subhead"><i class="fa fa-balance-scale"></i> Optional Question Pool</h2>
+
+           {% if optional_questions %}
+           <table class="pure-table pure-table-horizontal">
+               <thead>
+                   <tr><th>Question</th><th>Type</th><th>Responses</th><th></th></tr>
+               </thead>
+               <tbody>
+                   {% for question in optional_questions %}
+                   <tr><td>{{ question.text }}</td><td>{% if question.type == 1%}MCQ</td><td>{% for response in question.responsesList() %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %} {% else %}Text</td><td>-- Free response -- {% endif %}</td><td><a class="pure-button" href="questions/delete/{{ question.id }}"><i class="fa fa-trash"></i></a></td></tr>
+                   {% endfor %}
+               </tbody>
+           </table>
+           {% else %}
+           <p>There are no optional questions currently in the pool. Please add a question first.</p>
            {% endif %}
         </div>
    </div>
