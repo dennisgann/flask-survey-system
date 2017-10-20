@@ -1,0 +1,96 @@
+<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>pyChart Survey System :: Dashboard</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="static/css/styles.css">
+	<link rel="stylesheet" href="static/css/font-awesome.min.css">
+
+</head>
+<body>
+
+    <div id="main">
+
+
+        <div class="header">
+            <h1>pyChart</h1>
+            <h2>A python/flask Survey System created with <i class="fa fa-pie-chart"></i> in mind.</h2>
+
+            <div class="pure-menu pure-menu-horizontal">
+				<a href="/" class="pure-menu-heading pure-menu-link"><i class="fa fa-home"></i> DASHBOARD</a>
+				<ul class="pure-menu-list">
+
+					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
+				</ul>
+			</div>
+        </div>
+
+        <div class="content">
+
+            <h2 class="content-subhead"><i class="fa fa-smile-o"></i> Welcome, {{ session['username'] }}</h2>
+
+            {% if enrolments %}
+            <p>
+                You are currently involved with:
+                <i>
+                {% for enrolment in enrolments %}
+                    {{ enrolment.course.name + " " + enrolment.course.session }}{{ ", " if not loop.last }}
+                {% endfor %}
+                </i>
+            </p>
+            {% else %}
+                <p>You are not involved with any courses.</p>
+            {% endif %}
+
+
+
+            <h2 class="content-subhead"><i class="fa fa-hourglass-half"></i> Pending Surveys</h2>
+
+            {% if draft_surveys %}
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
+                </thead>
+                {% for survey in draft_surveys %}
+                <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button" href="surveys/review/{{ survey.id }}"><i class="fa fa-pencil"></i> Review Survey</a></td></tr>
+
+             {% endfor %}
+            </table>
+            {% else %}
+            <p>There are no surveys waiting to be reviewed.</p>
+            {% endif %}
+
+
+
+            <h2 class="content-subhead"><i class="fa fa-eye-slash"></i> Closed Surveys</h2>
+
+            {% if inactive_surveys %}
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
+                </thead>
+                {% for survey in inactive_surveys %}
+                <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button pure-button-disabled" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a></td></tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>There are no closed surveys for your course involvements.</p>
+            {% endif %}
+
+
+
+            <h2 class="content-subhead"><i class="fa fa-info"></i> About the Project</h2>
+            <p>
+            	pyChart is a python/flask built Survey System. Created by Frank Foo, Dennis Gann and Charmaine Leung for a UNSW COMP1531 17s2 Group Project.
+            </p>
+
+        </div>
+    </div>
+
+</body>
+</html>

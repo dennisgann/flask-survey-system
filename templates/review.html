@@ -1,0 +1,80 @@
+<!doctype html>
+
+<html>
+{% if error == 3 %}<p style="color: red;">The survey you have requested does not exist. Please check your link is correct.</p>
+{% else %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>pyChart Survey System :: {{ survey.name }}</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+
+</head>
+<body>
+
+    <div id="main">
+
+        <div class="header">
+            <h1>{{ survey.name }}</h1>
+            <h2>{{ survey.course.name + " " + survey.course.session }}</h2>
+        </div>
+        <div class="content">
+
+
+            {% if success %}
+            <h2 class="content-subhead"><i class="fa fa-check"></i> The survey is now open</h2>
+            <p style="color: green;">The survey has been published successfully.</p>
+            <p>Survey results will be made available to you through your dashboard when the survey closes.</p><br>
+            <a href="/">Click here to return to your Dashboard.</a>
+
+            {% elif survey.state == 1 %}
+
+            <h2 class="content-subhead"><i class="fa fa-pencil"></i> Please review the survey below</h2>
+            <br>
+
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+
+            <form class="pure-form pure-form-stacked">
+                <fieldset>
+                    {% for question in questions %}
+                    <legend>{{ question.text }} {% if question.required %}<span class="pure-form-message-inline">* required</span>{% endif %}</legend>
+                        {% if question.type == 1 %}
+                            {% for response in question.responsesList() %}
+                                <input name="{{ question.id }}" type="radio" value="{{ loop.index }}" disabled> {{ response }}</input><br>
+                            {% endfor %}
+                            <br>
+                        {% else %}
+                            <textarea class="pure-input-1-2" name="{{ question.id }}" placeholder="Please enter your response..." disabled></textarea><br>
+                        {% endif %}
+                    {% endfor %}
+                </fieldset>
+            </form>
+
+           <br>
+           <form class="pure-form pure-form-stacked" method="POST">
+               <legend>--- OPTIONAL QUESTIONS ---</legend>
+               <p>Select any additional optional questions you wish to include in the survey.</p>
+               {% if optional_questions %}
+                   {% for question in optional_questions %}
+                       <input name="{{ question.id }}" type="checkbox" value="{{ question.id }}"> {{ question.text }} ({% if question.type == 1 %}MCQ{% else %}Text{% endif %})</input><br>
+                   {% endfor %}
+               {% else %}
+               <i>There are no optional questions in the pool that can be added to this survey.</i><br>
+               {% endif %}
+               <br>
+               <button type="submit" name="bt" class="pure-button pure-button-primary">Publish Survey</button>
+           </form>
+
+           {%else%}
+           <p>This survey is past the review stage and cannot be reviewed.</p>
+           {% endif %}
+        </div>
+    </div>
+
+</body>
+{% endif %}
+</html>

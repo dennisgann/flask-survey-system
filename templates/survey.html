@@ -1,10 +1,11 @@
 <!doctype html>
 
 <html>
+{% if error == 3 %}<p style="color: red;">The survey you have requested does not exist. Please check your link is correct.</p>
+{% else %}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
     <title>pyChart Survey System :: {{ survey.name }}</title>
 
@@ -19,31 +20,38 @@
 
         <div class="header">
             <h1>{{ survey.name }}</h1>
-            <h2>{{ survey.course }}</h2>
+            <h2>{{ survey.course.name + " " + survey.course.session }}</h2>
         </div>
         <div class="content">
 
 
-            {% if error == 3 %}<p style="color: red;">The survey you have requested does not exist. Please check your link is correct.</p>
-            {% elif success %}<p style="color: green;">Your response has been recorded successfully.</p>
+            {% if success %}
+            <h2 class="content-subhead"><i class="fa fa-comment"></i> Thanks for your feedback</h2>
+            <p style="color: green;">Your response has been recorded successfully.</p>
+            <p>Survey results will be made available to you through your dashboard when the survey closes.</p><br>
+            <a href="/">Click here to return to your Dashboard.</a>
 
-            {% elif survey.state == '1' %}
+            {% elif survey.state == 2 %}
 
             <h2 class="content-subhead"><i class="fa fa-comment"></i> Please complete the survey below</h2>
             <p>Your feedback is greatly appreciated.</p><br>
 
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>
-            {% elif error == 1 %}<p style="color: red;">Please complete all survey questions.</p>
+            {% elif error == 1 %}<p style="color: red;">Please complete all required survey questions.</p>
             {% elif error == 2 %}<p style="color: red;">An error occured whilst recording your response. Please try again later.</p>{% endif %}
 
             <form class="pure-form pure-form-stacked" method="POST">
                 <fieldset>
-                    {% for question in survey.questions %}
-                    <legend>{{ question.text }}</legend>
-                        {% for response in question.responses %}
-                        <input name="{{ question.id }}" type="radio" value="{{ loop.index }}"> {{ response }}</input><br>
-                        {% endfor %}
-                        <br>
+                    {% for question in questions %}
+                    <legend>{{ question.text }} {% if question.required %}<span class="pure-form-message-inline">* required</span>{% endif %}</legend>
+                        {% if question.type == 1 %}
+                            {% for response in question.responsesList() %}
+                                <input name="{{ question.id }}" type="radio" value="{{ loop.index }}"> {{ response }}</input><br>
+                            {% endfor %}
+                            <br>
+                        {% else %}
+                            <textarea class="pure-input-1-2" name="{{ question.id }}" placeholder="Please enter your response..."></textarea><br>
+                        {% endif %}
                     {% endfor %}
                     <button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
                 </fieldset>
@@ -56,4 +64,5 @@
     </div>
 
 </body>
+{% endif %}
 </html>
