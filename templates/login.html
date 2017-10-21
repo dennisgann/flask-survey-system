@@ -27,6 +27,7 @@
 
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
             {% if error == 1 %}<p style="color: red;">Your username/password was incorrect.</p>{% endif %}
+            {% if success == 1 %}<p style="color: green;">Your have successfully registered as a guest.</p>{% endif %}
 
             <form class="pure-form pure-form-aligned" method="POST">
                 <fieldset>
@@ -43,7 +44,7 @@
                     </div>
                 </fieldset>
             </form>
-            <a class="pure-button" href="/register"><i class="fa fa-external-link"></i> Register Guest</a>
+            <a class="pure-button" href="/register"><i class="fa fa-external-link"></i> Register as a Guest</a>
 
         </div>
     </div>

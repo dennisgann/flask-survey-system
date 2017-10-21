@@ -44,9 +44,20 @@ def index():
     return render_template("login.html") 
     
 #guest register route - displays guest registration
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
+    
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        course = request.form["course"]
+        
+        if system.create_user(1222,username, password, 4) == 0:
+            return render_template("registerGuest.html", error=1)
+        return render_template("login.html", success=1)
+    
     return render_template("registerGuest.html")
+            
 
 
 #questions route - displays question pool

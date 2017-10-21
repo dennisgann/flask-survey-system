@@ -24,6 +24,9 @@
 
         <div class="content">
             <h2 class="content-subhead"><i class="fa fa-sign-in"></i>Register as a Guest User</h2>
+            
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+            {% if error == 1 %}<p style="color: red;">Your username has been taken. Please select a new username.</p>{% endif %}
 
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
 
@@ -35,11 +38,11 @@
                     </div>
                     <div class="pure-control-group">
                         <label>Password</label>
-                        <input name="password" placeholder="Password">
+                        <input name="password" type=password placeholder="Password">
                     </div>
                     <div class="pure-control-group">
                         <label>Course Offering</label>
-                        <input name="password" placeholder="Course Offering">
+                        <input name="course" placeholder="Course Offering">
                     </div>
                     <div class="pure-controls">
                         <button type="submit" class="pure-button pure-button-primary"/>Submit</button>
