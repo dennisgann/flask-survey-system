@@ -46,19 +46,31 @@ def index():
 #guest register route - displays guest registration
 @app.route("/register", methods=["GET", "POST"])
 def register():
+
+    courses = Course.query.all()
     
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         course = request.form["course"]
         
-        if system.create_user(1222,username, password, 4) == 0:
-            return render_template("registerGuest.html", error=1)
-        return render_template("login.html", success=1)
-    
-    return render_template("registerGuest.html")
+        system.create_user(2500, username, password, 5)
             
 
+        return render_template("registerGuest.html", success=1)
+    
+    return render_template("registerGuest.html", courses=courses)
+            
+#approval route - displays guests awaiting approval
+@app.route("/approve")
+def approve():
+    if not system.check_login() == 3: return redirect(url_for('index'))
+    
+    guest_requests = User.query.filter_by(type=5).all()
+    
+    return render_template("approveGuest.html", guest_requests = guest_requests)
+    
+    
 
 #questions route - displays question pool
 @app.route("/questions")
