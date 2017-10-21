@@ -41,7 +41,12 @@ def index():
 
         return render_template("login.html", error=1)
 
-    return render_template("login.html")
+    return render_template("login.html") 
+    
+#guest register route - displays guest registration
+@app.route("/register")
+def register():
+    return render_template("registerGuest.html")
 
 
 #questions route - displays question pool
@@ -263,7 +268,8 @@ def survey(sid):
 #results page - show survey results
 @app.route("/results/<sid>")
 def results(sid):
-    return "Not implemented yet"
+
+    return 
 
 
 #logout - destroys session and redirects to index/login
