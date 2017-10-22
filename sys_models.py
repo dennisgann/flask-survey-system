@@ -3,6 +3,50 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import session
 from server import db
 from data_models import User, Course, Enrolment, Question, Survey, Response
+import unittest
+
+#Test case classes
+class test_Authentication(unittest.Testcase):
+    def test_adminLoginSuccess(self):
+        self.assertTrue(authenticate(self, username, password)) #Can't find info in passwords.csv
+
+    def test_adminLoginFail(self):
+        self.assertFalse(authenticate(self, username, password)) #Can't find info for admin in password.csv
+
+    def test_staffLoginSuccess(self):
+        self.assertTrue(authenticate(self, staff670, 50))
+
+    def test_staffLoginFail(self):
+        self.assertFalse(authenticate(self, staff0, -1))
+
+    def test_studentLoginSuccess(self):
+        self.assertTrue(authenticate(self, student22, 100))
+
+    def test_studentLoginFail(self):
+        self.assertFalse(authenticate(self, student0, -1))
+
+    def test_guestLoginSuccess(self):
+        self.assertTrue(authenticate(self, guest, password)) #Can't find info in passwords.csv
+
+    def test_guestLoginFail(self):
+        self.assertTrue(authenticate(self, guest, password))
+
+class test_add_question(unittest.Testcase):
+    def test_addQuestionSuccess(self):
+        self.assertTrue(add_question(self, Question_Name, 1, 1, responses))
+
+    def test_addQuestionFail(self):
+        self.assertFail(add_question(self, Question_Name))
+
+class test_find_question(unittest.Testcase):
+    def test_findQuestionSuccess(self):
+        self.assertTrue(find_question(self, 40))
+
+    def test_findQuestionFail(self):
+        self.assertFail(find_question(self, -1))
+
+class test_update_question(unittest,Testcase):
+    
 
 class SurveySystem():
 
