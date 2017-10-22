@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>pyChart Survey System :: Login</title>
+    <title>pyChart Survey System :: Register as a Guest</title>
 
 	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 	<link rel="stylesheet" href="/static/css/styles.css">
@@ -13,8 +13,8 @@
 
 </head>
 <body>
-
     <div id="main">
+
 
 
         <div class="header">
@@ -23,11 +23,12 @@
         </div>
 
         <div class="content">
-            <h2 class="content-subhead"><i class="fa fa-sign-in"></i> Login</h2>
+            <h2 class="content-subhead"><i class="fa fa-sign-in"></i>Register as a Guest User</h2>
+            
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+            {% if error == 1 %}<p style="color: red;">Your username has been taken. Please select a new username.</p>{% endif %}
 
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
-            {% if error == 1 %}<p style="color: red;">Your username/password was incorrect.</p>{% endif %}
-            {% if success == 1 %}<p style="color: green;">Your have successfully registered as a guest.</p>{% endif %}
 
             <form class="pure-form pure-form-aligned" method="POST">
                 <fieldset>
@@ -37,14 +38,17 @@
                     </div>
                     <div class="pure-control-group">
                         <label>Password</label>
-                        <input name="password" type="password" placeholder="Password">
+                        <input name="password" type=password placeholder="Password">
+                    </div>
+                    <div class="pure-control-group">
+                        <label>Course Offering</label>
+                        <input name="course" placeholder="Course Offering">
                     </div>
                     <div class="pure-controls">
-                        <button type="submit" class="pure-button pure-button-primary"/>Sign in</button>
+                        <button type="submit" class="pure-button pure-button-primary"/>Submit</button>
                     </div>
                 </fieldset>
             </form>
-            <a class="pure-button" href="/register"><i class="fa fa-external-link"></i> Register as a Guest</a>
 
         </div>
     </div>

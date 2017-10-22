@@ -4,13 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
 
-    <title>pyChart Survey System :: Dashboard</title>
+    <title>pyChart Survey System :: Approve Guest</title>
 
 	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
-	<link rel="stylesheet" href="static/css/styles.css">
-	<link rel="stylesheet" href="static/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
 
 </head>
 <body>
@@ -47,21 +46,25 @@
 
         <div class="content">
 
-            <h2 class="content-subhead"><i class="fa fa-link"></i> Quick links</h2>
-            <p>
-            	<a class="pure-button pure-button-primary" href="/questions/add">Add Question</a>
-				<a class="pure-button pure-button-primary" href="/questions">View Questions</a>
-				<a class="pure-button pure-button-primary" href="/surveys/create">Create Survey</a>
-				<a class="pure-button pure-button-primary" href="/surveys">View Surveys</a>
-				<a class="pure-button pure-button-disabled" href="#">View Results</a>
-
-            </p>
 
 
-            <h2 class="content-subhead"><i class="fa fa-info"></i> About the Project</h2>
-            <p>
-            	pyChart is a python/flask built Survey System. Created by Frank Foo, Dennis Gann and Charmaine Leung for a UNSW COMP1531 17s2 Group Project.
-            </p>
+            <h2 class="content-subhead"><i class="fa fa-question"></i> Pending Guest Requests</h2
+            
+            <form class="pure-form pure-form-aligned" method="POST">
+            {% if guest_requests %}
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr><th>id</th><th>Username</th><th>Course</th><th></th></tr>
+                </thead>
+                {% for guest in guest_requests %}
+                <tr><td>{{ guest.id }}</td><td>{{ guest.username }}</td><td>{{Enrolment.query.filter_by(u_id=guest.id).all()}}</td><td><button class="pure-button" type="submit"name="guest" action={{guest.id}}><i class="fa fa-check"></i> Approve Guest</button></td></tr>
+ 
+             {% endfor %}
+            </table>
+            {% else %}
+            <p>There are no guest waiting to be approved.</p>
+            {% endif %}
+            </form>
 
         </div>
     </div>
