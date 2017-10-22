@@ -48,21 +48,23 @@
 
 
 
-            <h2 class="content-subhead"><i class="fa fa-info"></i> Pending Guest Requests</h2>
+            <h2 class="content-subhead"><i class="fa fa-question"></i> Pending Guest Requests</h2
             
+            <form class="pure-form pure-form-aligned" method="POST">
             {% if guest_requests %}
             <table class="pure-table pure-table-horizontal">
                 <thead>
                     <tr><th>id</th><th>Username</th><th>Course</th><th></th></tr>
                 </thead>
                 {% for guest in guest_requests %}
-                <tr><td>{{ guest.id }}</td><td>{{ guest.username }}</td><td>course</td><td><a class="pure-button" ><i class="fa fa-pencil"></i> Approve Guest</a></td></tr>
-
+                <tr><td>{{ guest.id }}</td><td>{{ guest.username }}</td><td>course</td><td><button class="pure-button" type="submit"name="guest" action={{guest.id}}><i class="fa fa-check"></i> Approve Guest</button></td></tr>
+ 
              {% endfor %}
             </table>
             {% else %}
             <p>There are no guest waiting to be approved.</p>
             {% endif %}
+            </form>
 
         </div>
     </div>

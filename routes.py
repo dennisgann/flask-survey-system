@@ -54,19 +54,25 @@ def register():
         password = request.form["password"]
         course = request.form["course"]
         
-        system.create_user(2500, username, password, 5)
+        gid = User.query.order_by(User.id.desc()).first().id
+        
+        system.create_user(gid+1,username, password, 5)
             
 
-        return render_template("registerGuest.html", success=1)
+        return render_template("registerGuest.html", success=1, courses=courses)
     
     return render_template("registerGuest.html", courses=courses)
             
 #approval route - displays guests awaiting approval
-@app.route("/approve")
+@app.route("/approve", methods=["GET", "POST"])
 def approve():
     if not system.check_login() == 3: return redirect(url_for('index'))
     
     guest_requests = User.query.filter_by(type=5).all()
+    
+    if request.method == "POST":
+        approved_user = request.form['guest']
+        approved_user.system.update_user_type(4)
     
     return render_template("approveGuest.html", guest_requests = guest_requests)
     
