@@ -27,7 +27,14 @@ CSS and JS:
 
 
 # Section 3: Tests
-- contained in tests/
+- to run ($ python tests.py)
+- tests for core user stories:
+1. TestAddQuestion - Create Mandatory/Optional Questions
+2. TestCreateSurvey - Create a survey
+3. TestEnrolment - Enrol a user
+4. TestUserCreation - Create user (ie. guest or csv import)
+5. TestUserAuthentication - Authenticate user
+
 
 
 # Suggested Login credentials:

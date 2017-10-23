@@ -177,9 +177,11 @@ class SurveySystem():
         with open('data/enrolments.csv','r') as csv_in:
             reader = csv.reader(csv_in)
             for row in reader:
-                c_id = Course.query.filter_by(name=row[1], session=row[2]).first().id
-                if not c_id:
-                    return 0 #failure
+                course = Course.query.filter_by(name=row[1], session=row[2]).first()
+                if course:
+                    c_id = course.id
+                else:
+                    return 0
 
                 if not Enrolment.query.filter_by(u_id=row[0], c_id=c_id).first():
                     enrolment = Enrolment(u_id=row[0], c_id=c_id)
