@@ -8,6 +8,7 @@ Tutorial H13A
 External Python libraries:
 - Flask 0.12.2 (http://flask.pocoo.org)
 - Flask SQLAlchemy 2.3.1 (http://flask-sqlalchemy.pocoo.org/2.3/)
+
 CSS and JS:
 - Pure.css 1.0.0 (https://purecss.io)
 - Google Charts (https://developers.google.com/chart/)
