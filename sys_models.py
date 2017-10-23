@@ -5,62 +5,32 @@ from server import db
 from data_models import User, Course, Enrolment, Question, Survey, Response
 import unittest
 
-#Test case classes
-class test_Authentication(unittest.Testcase):
-    def test_adminLoginSuccess(self):
-        self.assertTrue(authenticate(self, username, password)) #Can't find info in passwords.csv
-
-    def test_adminLoginFail(self):
-        self.assertFalse(authenticate(self, username, password)) #Can't find info for admin in password.csv
-
-    def test_staffLoginSuccess(self):
-        self.assertTrue(authenticate(self, staff670, 50))
-
-    def test_staffLoginFail(self):
-        self.assertFalse(authenticate(self, staff0, -1))
-
-    def test_studentLoginSuccess(self):
-        self.assertTrue(authenticate(self, student22, 100))
-
-    def test_studentLoginFail(self):
-        self.assertFalse(authenticate(self, student0, -1))
-
-    def test_guestLoginSuccess(self):
-        self.assertTrue(authenticate(self, guest, password)) #Can't find info in passwords.csv
-
-    def test_guestLoginFail(self):
-        self.assertTrue(authenticate(self, guest, password))
-
-class test_add_question(unittest.Testcase):
-    def test_addQuestionSuccess(self):
-        self.assertTrue(add_question(self, Question_Name, 1, 1, responses))
-
-    def test_addQuestionFail(self):
-        self.assertFail(add_question(self, Question_Name))
-
-class test_find_question(unittest.Testcase):
-    def test_findQuestionSuccess(self):
-        self.assertTrue(find_question(self, 40))
-
-    def test_findQuestionFail(self):
-        self.assertFail(find_question(self, -1))
-
-class test_update_question(unittest,Testcase):
-    
 
 class SurveySystem():
 
     def add_question(self, q_text, type, required, responses):
+
+        if q_text.isspace() or q_text == "" or type == 1 and (len(responses) < 2 \
+        or all(responses[i].isspace() for i in range(0, len(responses)-1))):
+            return 0 #failure: invalid parameters
+        if not type in range(1,3):
+            return 0 #failure: invalid type
         newQ = Question(text=q_text, state=1, type=type, required=required, responses=str(responses))
         db.session.add(newQ)
         db.session.commit()
         return 1 #success
 
+
     def find_question(self, q_id):
         question = Question.query.filter_by(id=q_id).first()
         return question
 
+
     def update_question(self, q_id, q_text, state, type, required, responses):
+        if q_text.isspace() or q_text == "" or type == 1 and (len(responses) < 2 \
+        or all(responses[i].isspace() for i in range(0, len(responses)-1))):
+            return 0 #failure: invalid parameters
+
         question = Question.query.filter_by(id=q_id).first()
         if question:
             question.text = q_text
@@ -69,18 +39,28 @@ class SurveySystem():
             question.required = required
             question.responses = str(responses)
             db.session.commit()
-            return 1
+            return 1 #success
         else:
-            return 0
+            return 0 #failure: question not found
 
 
     def create_survey(self, name, c_id, questions):
+        if name.isspace() or name == "" or not questions:
+            return 0 #failure: invalid parameters
+        if not Course.query.filter_by(id=c_id).first():
+            return 0 #failure: invalid course id
         newS = Survey(name=name, c_id=c_id, state=1, questions=str(questions))
         db.session.add(newS)
         db.session.commit()
         return 1 #success
 
+
     def update_survey(self, s_id, name, c_id, state, questions):
+        if name.isspace() or name == "" or not questions:
+            return 0 #failure: invalid parameters
+        if not Course.query.filter_by(id=c_id).first():
+            return 0 #failure: invalid course id
+
         survey = Survey.query.filter_by(id=s_id).first()
         if survey:
             survey.name = name
@@ -88,14 +68,21 @@ class SurveySystem():
             survey.state = state
             survey.questions = str(questions)
             db.session.commit()
-            return 1
+            return 1 #success
         else:
-            return 0
-            
+            return 0 #failure: invalid survey id
+
 
     def save_response(self, sid, uid, qid, text, num):
         if (text is None and num is None):
             return 0 #failure
+        if not Survey.query.filter_by(id=sid).first():
+            return 0 #failure: invalid survey id
+        if not User.query.filter_by(id=uid).first():
+            return 0 #failure: invalid user id
+        if not Question.query.filter_by(id=qid).first():
+            return 0 #failure: invalid question id
+
         newR = Response(s_id=sid, u_id=uid, q_id=qid, text=text, num=num)
         db.session.add(newR)
         db.session.commit()
@@ -103,23 +90,43 @@ class SurveySystem():
 
 
     def create_user(self, uid, username, password, type):
+        #check parameters valid
+        if password.isspace() or password == "" or username.isspace() or username == "":
+            return 0 #failure username and password can't be blank (space)
+        if User.query.filter_by(username=username).first():
+            return 0 #failure: user with same username already exists
         if User.query.filter_by(id=uid).first():
             return 0 #failure: user with same id already exists
+        if type > 4 or type < 1:
+            return 0 #failure: incorrect type
+
         newU = User(id=uid, username=str.lower(username), password=generate_password_hash(password), type=type)
         db.session.add(newU)
         db.session.commit()
         return 1 #success
 
-######ADDED FOR GUEST LOGIN        
-    def update_user_type(self, type):
-        User.type == type    
-        db.session.commit() 
-        
-    def add_enrolment(self, uid, cid):
-        newE = Enrolment(u_id=uid, c_id=cid)
-        db.session.add(newE)
-        db.session.commit() 
-################
+
+    def update_user_type(self, uid, type):
+        if type > 4 or type < 0:
+            return 0 #failure: incorrect type
+        user = User.query.filter_by(id=uid).first()
+        if user:
+            user.type = type
+            db.session.commit()
+            return 1 #success: user updated
+        else:
+            return 0 #failure: no user with uid found
+
+
+    def create_enrolment(self, uid, cid):
+        if not User.query.filter_by(id=uid).first() or not Course.query.filter_by(id=cid).first():
+            return 0 #failure: UID or CID is incorrect
+        enrolment = Enrolment(u_id=uid, c_id=cid)
+        db.session.add(enrolment)
+        db.session.commit()
+        return 1 #success
+
+
     def get_open_surveys(self):
         if session['user_type'] == 3:
             return Survey.query.filter_by(state = 2).all()
@@ -204,7 +211,7 @@ class SurveySystem():
         if not user:
             return False
 
-        if check_password_hash(user.password, password):
+        if check_password_hash(user.password, password) and user.type > 0:
             session['logged_in'] = True
             session['username'] = user.username
             session['user_id'] = user.id
@@ -212,6 +219,7 @@ class SurveySystem():
             return True #valid user
 
         return False #credentials incorrect
+
 
     def check_login(self):
         if session.get('user_type'):

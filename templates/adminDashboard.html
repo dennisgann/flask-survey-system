@@ -56,9 +56,26 @@
 				<a class="pure-button pure-button-primary" href="/questions">View Questions</a>
 				<a class="pure-button pure-button-primary" href="/surveys/create">Create Survey</a>
 				<a class="pure-button pure-button-primary" href="/surveys">View Surveys</a>
-				<a class="pure-button pure-button-disabled" href="#">View Results</a>
-
             </p>
+
+
+            <h2 class="content-subhead"><i class="fa fa-users"></i> Pending Guest Users</h2>
+            {% if approved %}<p style="color: green;">The guest user has been successfully approved.</p>
+            {% elif deleted %}<p style="color: green;">The guest user has been successfully deleted.</p>{% endif %}
+
+
+            {% if pending_enrolments %}
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr><th>Username</th><th>Course</th><th></th></tr>
+                </thead>
+                {% for enrolment in pending_enrolments %}
+                <tr><td>{{ enrolment.user.username }}</td><td>{{ enrolment.course.name + " " + enrolment.course.session }}</td><td><a class="pure-button" href="guest/approve/{{ enrolment.user.id }}"><i class="fa fa-check"></i> Approve</a>&nbsp;<a class="pure-button" href="guest/delete/{{ enrolment.user.id }}"><i class="fa fa-times"></i> Delete</a></td></tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>There are no pending guest users.</p>
+            {% endif %}
 
 
             <h2 class="content-subhead"><i class="fa fa-info"></i> About the Project</h2>

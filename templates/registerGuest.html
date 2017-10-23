@@ -5,11 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>pyChart Survey System :: Register as a Guest</title>
+    <title>pyChart Survey System :: Guest User Registration</title>
 
 	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 	<link rel="stylesheet" href="/static/css/styles.css">
 	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 
 </head>
 <body>
@@ -23,35 +26,56 @@
         </div>
 
         <div class="content">
-            <h2 class="content-subhead"><i class="fa fa-sign-in"></i>Register as a Guest User</h2>
-            
-            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
-            {% if error == 1 %}<p style="color: red;">Your username has been taken. Please select a new username.</p>{% endif %}
+            <h2 class="content-subhead"><i class="fa fa-user-plus"></i> Guest User Registration</h2>
 
-            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+            {% if success == 1 %}<p style="color: green;">You have successfully registered as a guest user.</p><p>Your account is now pending admin approval</p>
+            {% elif error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>
+            {% elif error == 1 %}<p style="color: red;">The username you selected is already in use. Please select a different username.</p>
+            {% elif error == 2 %}<p style="color: red;">Your passwords do not match. Please try again.</p>
+            {% elif error == 3 %}<p style="color: red;">There were errors in the form. Please complete all required fields and try again.</p>{% endif %}
+
 
             <form class="pure-form pure-form-aligned" method="POST">
                 <fieldset>
                     <div class="pure-control-group">
                         <label>Username</label>
-                        <input name="username" placeholder="Username"/>
+                        <input class="pure-input-1-4" name="username" placeholder="Username" required/>
+                        <span class="pure-form-message-inline">* required</span>
                     </div>
                     <div class="pure-control-group">
                         <label>Password</label>
-                        <input name="password" type=password placeholder="Password">
+                        <input class="pure-input-1-4" name="password" type="password" placeholder="Password" required>
+                        <span class="pure-form-message-inline">* required</span>
                     </div>
                     <div class="pure-control-group">
-                        <label>Course Offering</label>
-                        <input name="course" placeholder="Course Offering">
+                        <label>Confirm Password</label>
+                        <input class="pure-input-1-4" name="confirmPassword" type="password" placeholder="Confirm Password" required>
+                        <span class="pure-form-message-inline">* required</span>
+                    </div>
+                    <div class="pure-control-group">
+                        <label>Course</label>
+                        <select class="pure-input-1-4" name="course" required>
+                            <option></option>
+                            {% for course in courses %}
+                            <option value="{{course.id}}">{{ course.name }} {{ course.session }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="pure-form-message-inline">* required</span>
                     </div>
                     <div class="pure-controls">
-                        <button type="submit" class="pure-button pure-button-primary"/>Submit</button>
+                        <button type="submit" class="pure-button pure-button-primary"/>Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/">Cancel</a>
                     </div>
                 </fieldset>
             </form>
-
         </div>
     </div>
 
 </body>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').select2({placeholder: 'Please select a course...', allowClear: true});
+    });
+</script>
+
 </html>

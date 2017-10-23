@@ -16,6 +16,18 @@ system = SurveySystem()
 @app.route("/", methods=["GET", "POST"])
 def index():
 
+    #check post login data
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        #attempt to authenticate
+        if system.authenticate(username, password):
+            return redirect(url_for("index"))
+
+        return render_template("login.html", error=1)
+
+    #check user login and redirect to their dashboard
     if system.check_login() == 1:
         enrolments = Enrolment.query.filter_by(u_id=session['user_id']).all()
         open_surveys = system.get_open_surveys()
@@ -29,54 +41,93 @@ def index():
         return render_template("staffDashboard.html", enrolments=enrolments, draft_surveys=draft_surveys, inactive_surveys=closed_surveys)
 
     elif system.check_login() == 3:
-        return render_template("adminDashboard.html")
+        pending_guests = User.query.filter_by(type=4).all()
+        pending_enrolments = []
+        for guest in pending_guests:
+            enrolment = Enrolment.query.filter_by(u_id=guest.id).first()
+            if enrolment:
+                pending_enrolments.append(enrolment)
+
+        if request.args.get('deleted'):
+            return render_template("adminDashboard.html", pending_enrolments=pending_enrolments, deleted=1)
+        elif request.args.get('approved'):
+            return render_template("adminDashboard.html", pending_enrolments=pending_enrolments, approved=1)
+        else:
+            return render_template("adminDashboard.html", pending_enrolments=pending_enrolments)
 
 
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    #else, return login page
+    return render_template("login.html")
 
-        if system.authenticate(username, password):
-            return redirect(url_for("index"))
 
-        return render_template("login.html", error=1)
-
-    return render_template("login.html") 
-    
 #guest register route - displays guest registration
-@app.route("/register", methods=["GET", "POST"])
-def register():
+@app.route("/guest/register", methods=["GET", "POST"])
+def registerGuest():
 
     courses = Course.query.all()
-    
+
+    #process post data
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        confirmPassword = request.form["confirmPassword"]
         course = request.form["course"]
-        
-        gid = User.query.order_by(User.id.desc()).first().id
-        
-        system.create_user(gid+1,username, password, 5)
-        system.add_enrolment(gid+1, course)
-            
-        return render_template("registerGuest.html", success=1, courses=courses)
-    
+
+        #check password match
+        if password != confirmPassword:
+            return render_template("registerGuest.html", error=2, courses=courses)
+
+        #check if form inputs are valid (ie. not empty)
+        if username.isspace() or password.isspace() or username == "" or password == "" or not course:
+            return render_template("registerGuest.html", error=3, courses=courses)
+
+        #add user to system as new/pending guest user (type = 4)
+        if system.create_user(None, username, password, 4):
+            #create pending enrolment
+            if system.create_enrolment(User.query.filter_by(username=username).first().id, course):
+                return render_template("registerGuest.html", success=1, courses=courses)
+            else:
+                return render_template("registerGuest.html", error=0, courses=courses)
+        else:
+            return render_template("registerGuest.html", error=1, courses=courses)
+
+
     return render_template("registerGuest.html", courses=courses)
-            
-#approval route - displays guests awaiting approval
-@app.route("/approve", methods=["GET", "POST"])
-def approve():
+
+
+#guest user approval route - approves a guest user
+@app.route("/guest/approve/<uid>")
+def approveGuest(uid):
+
     if not system.check_login() == 3: return redirect(url_for('index'))
-    
-    guest_requests = User.query.filter_by(type=5).all()
-    
-    if request.method == "POST":
-        approved_user = request.form['guest']
-        approved_user.system.update_user_type(4)
-    
-    return render_template("approveGuest.html", guest_requests = guest_requests, Enrolment=Enrolment)
-    
-    
+
+    approved = 0
+    #get user to approve
+    user = User.query.filter_by(id=uid).first()
+
+    if user:
+        if system.update_user_type(uid, 1):
+            approved = 1
+
+    return redirect(url_for("index", approved=approved))
+
+
+#guest user delete route - deletes a guest user
+@app.route("/guest/delete/<uid>")
+def deleteGuest(uid):
+
+    if not system.check_login() == 3: return redirect(url_for('index'))
+
+    deleted = 0
+    #get user to delete
+    user = User.query.filter_by(id=uid).first()
+
+    if user:
+        if system.update_user_type(uid, 0):
+            deleted = 1
+
+    return redirect(url_for("index", deleted=deleted))
+
 
 #questions route - displays question pool
 @app.route("/questions")
@@ -305,7 +356,6 @@ def survey(sid):
 @app.route("/results/<sid>")
 def results(sid):
 
-<<<<<<< HEAD
     if not system.check_login(): return redirect(url_for('index'))
 
     course_ids = [r[0] for r in Enrolment.query.filter_by(u_id=session['user_id']).with_entities(Enrolment.c_id).all()]
@@ -326,9 +376,6 @@ def results(sid):
     responses = Response.query.filter_by(s_id=sid).all()
 
     return render_template("results.html", survey=survey, questions=questions, responses=responses)
-=======
-    return 
->>>>>>> cl
 
 
 #logout - destroys session and redirects to index/login
@@ -341,6 +388,8 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
+
+#404 error route - redirect to index
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(url_for("index"))

@@ -64,12 +64,12 @@
                 <fieldset>
                     <div class="pure-control-group">
                         <label>Survey name</label>
-                        <input class="pure-input-1-2" name="name" placeholder="Survey name"></input>
+                        <input class="pure-input-1-2" name="name" placeholder="Survey name" required></input>
                         <span class="pure-form-message-inline">* required</span>
                     </div>
                     <div class="pure-control-group">
                         <label>Course</label>
-                        <select class="pure-input-1-2" name="course">
+                        <select class="pure-input-1-2" name="course" required>
                             <option></option>
                             {% for course in courses %}
                             <option value="{{course.id}}">{{ course.name }} {{ course.session }}</option>

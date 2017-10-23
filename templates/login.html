@@ -16,7 +16,6 @@
 
     <div id="main">
 
-
         <div class="header">
             <h1>pyChart</h1>
             <h2>A python/flask Survey System created with <i class="fa fa-pie-chart"></i> in mind.</h2>
@@ -27,24 +26,23 @@
 
             {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
             {% if error == 1 %}<p style="color: red;">Your username/password was incorrect.</p>{% endif %}
-            {% if success == 1 %}<p style="color: green;">Your have successfully registered as a guest.</p>{% endif %}
 
             <form class="pure-form pure-form-aligned" method="POST">
                 <fieldset>
                     <div class="pure-control-group">
                         <label>Username</label>
-                        <input name="username" placeholder="Username"/>
+                        <input class="pure-input-1-4" name="username" placeholder="Username" required/>
                     </div>
                     <div class="pure-control-group">
                         <label>Password</label>
-                        <input name="password" type="password" placeholder="Password">
+                        <input class="pure-input-1-4" name="password" type="password" placeholder="Password" required>
                     </div>
                     <div class="pure-controls">
-                        <button type="submit" class="pure-button pure-button-primary"/>Sign in</button>
+                        <button type="submit" class="pure-button pure-button-primary pure-input-1-3"/>Sign in</button>
+                        <p><a class="pure-button pure-input-1-3" href="/guest/register"><i class="fa fa-user-plus"></i> Register as Guest</a></p>
                     </div>
                 </fieldset>
             </form>
-            <a class="pure-button" href="/register"><i class="fa fa-external-link"></i> Register as a Guest</a>
 
         </div>
     </div>
