@@ -62,7 +62,8 @@ class SurveySystem():
         db.session.add(newU)
         db.session.commit()
         return 1 #success
-        
+
+######ADDED FOR GUEST LOGIN        
     def update_user_type(self, type):
         User.type == type    
         db.session.commit() 
@@ -71,7 +72,7 @@ class SurveySystem():
         newE = Enrolment(u_id=uid, c_id=cid)
         db.session.add(newE)
         db.session.commit() 
-
+################
     def get_open_surveys(self):
         if session['user_type'] == 3:
             return Survey.query.filter_by(state = 2).all()
