@@ -39,6 +39,7 @@
 						</ul>
 					</li>
 					<li class="pure-menu-item"><a href="#" class="pure-menu-link pure-menu-disabled"><i class="fa fa-pie-chart"></i> Results</a></li>
+					<li class="pure-menu-item"><a href="/approve" class="pure-menu-link"><i class="fa fa-question"></i>Requests</a></li>
 					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
 				</ul>
 			</div>
@@ -54,13 +55,14 @@
             {% if guest_requests %}
             <table class="pure-table pure-table-horizontal">
                 <thead>
-                    <tr><th>id</th><th>Username</th><th>Course</th><th></th></tr>
+                    <tr><th>Username</th><th>Course</th><th></th></tr>
                 </thead>
                 {% for guest in guest_requests %}
-                <tr><td>{{ guest.id }}</td><td>{{ guest.username }}</td><td>{{Enrolment.query.filter_by(u_id=guest.id).all()}}</td><td><button class="pure-button" type="submit"name="guest" action={{guest.id}}><i class="fa fa-check"></i> Approve Guest</button></td></tr>
+                <tr><td>{{ guest.username }}</td><td>{{Enrolment.query.filter_by(u_id=guest.id).all().c_id}}<td><input type="checkbox" name="guests" value="{{guest}}"></td></tr>
  
              {% endfor %}
             </table>
+            <button type="submit"name="submit" value="submit">Submit</button>
             {% else %}
             <p>There are no guest waiting to be approved.</p>
             {% endif %}
