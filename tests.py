@@ -10,6 +10,12 @@ from sys_models import SurveySystem
 #(4) Login Authentication
 #(5) ???
 
+
+#helper functions needed
+#num_questions() returns no. of questions in database
+#get_question() returns whether a question is present 1 or not present 0 in database 
+#num_surveys() returns no. of surveys in database 
+
 # Login Authentication
 class test_Authentication(unittest.Testcase):
     def setUp(self):
@@ -17,31 +23,47 @@ class test_Authentication(unittest.Testcase):
         csv_import()
 
     def test_adminLoginSuccess(self):
-        self.assertTrue(authenticate(self, username, password)) #Can't find info in passwords.csv
+        username = admin
+        password = password
+        self.assertTrue(authenticate(self, username, password)) 
         self.assertEqual(check_login(self), 3) #Check that the system knows it is an admin
 
     def test_adminLoginFail(self):
-        self.assertFalse(authenticate(self, username, password)) #Can't find info for admin in password.csv
+        username = john
+        password = smith
+        self.assertFalse(authenticate(self, username, password))
 
     def test_staffLoginSuccess(self):
-        self.assertTrue(authenticate(self, staff670, 50))
+        username = 80
+        password = staff880
+        self.assertTrue(authenticate(self, username, password))
         self.assertEqual(check_login(self), 2) #Check that the system knows it is staff
 
     def test_staffLoginFail(self):
-        self.assertFalse(authenticate(self, staff0, -1))
+        username = john
+        password = smith
+        self.assertFalse(authenticate(self, username, password))
 
     def test_studentLoginSuccess(self):
-        self.assertTrue(authenticate(self, student22, 100))
+        username = 100
+        password = student228
+        self.assertTrue(authenticate(self, useranem, password))
         self.assertEqual(check_login(self), 1) #Check that the system knows it is a student
 
     def test_studentLoginFail(self):
-        self.assertFalse(authenticate(self, student0, -1))
+        username = john
+        password = smith
+        self.assertFalse(authenticate(self, username, smith))
 
     def test_guestLoginSuccess(self):
-        self.assertTrue(authenticate(self, guest, password)) #Can't find info in passwords.csv
+        username = guest #??
+        password = password #?? 
+        self.assertTrue(authenticate(self, username, password)) 
 
     def test_guestLoginFail(self):
-        self.assertTrue(authenticate(self, guest, password))
+        username = john
+        password = smith
+        self.assertTrue(authenticate(self, username, password))
 
     def tearDown(self):
         db.session.remove()
@@ -58,7 +80,7 @@ class test_add_question(unittest.Testcase):
         question_name = "valid question"
         type = 1
         required = 1
-        #not sure what to do for responses
+        responses = 'responses' #not sure what to do for responses
         self.assertEqual(get_question(question_name),0)
         num_questions = num_question() #function which counts number of questions in database
         add_question(self, question_name, type, required, responses)
@@ -83,7 +105,7 @@ class test_add_question(unittest.Testcase):
         question_name = "valid question"
         type = 1
         required = 2
-        #not sure what to do for responses
+        responses = 'responses' #not sure what to do for responses
         self.assertEqual(get_question(question_name),None)
         num_questions = num_question() #function which counts number of questions in database
         add_question(self, question_name, type, required, responses)
@@ -109,18 +131,30 @@ class test_add_question(unittest.Testcase):
         csv_import()
 
 #Test cases for survey creation
-class test_add_survey(unittest.Testcase):
+class test_create_survey(unittest.Testcase):
 
     def setUp(self):
         db.create_all()
         csv_import()
 
-    def test_add_survey_success(self):
+    def test_create_survey_success(self):
         survey_name = 'SurveyName'
         survey_id = '3'
         survey_questions = 'questions' #???
-        
+        num_surveys = num_surveys()
+        create_survey(self, survey_name, survey_id, survey_questions)
+        cur_num_surveys = num_surveys()
+        self.assertEqual(num_surveys+1,cur_num_surveys)
 
+    def test_create_survey_fail(self):
+        survey_name = ""
+        survey_id = '2'
+        survey_questions = ""
+        num_surveys = num_surveys()
+        with self.assertRaises(InvalidInputException):
+            create_survey(self, survey_name, survey_id, survey_questions)
+        cur_num_surveys = num_surveys()
+        self.assertEqual(num_surveys,cur_num_surveys)
 
 
 class test_find_question(unittest.Testcase):
@@ -147,7 +181,3 @@ class TestEnrolment(unittest.Testcase):
 
 if __name__ == '__main__':
     unittest.main()
-
-#helper functions needed
-#num_questions returns no. of questions in database
-#get_question returns whether a question is present 1 or not presnt 0 in database 
