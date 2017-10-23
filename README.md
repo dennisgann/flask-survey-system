@@ -4,8 +4,12 @@ Frank Foo, Dennis Gann, Charmaine Leung
 COMP1531 17s2 Group Project
 Tutorial H13A
 
+# Section 1: Dependencies
+- Flask 0.12.2 (http://flask.pocoo.org)
+- Flask SQLAlchemy 2.3.1 (http://flask-sqlalchemy.pocoo.org/2.3/)
 
-# Setup instructions:
+
+# Section 2: Setup instructions
 1. Unzip archive into new empty directory
 2. Ensure data/ directory contains the following CSV files: courses.csv, enrolments.csv & passwords.csv (update if necessary)
 3. Setup a python3 virtual environment ($ virtualenv --python=/usr/local/bin/python3 env)
@@ -15,6 +19,10 @@ Tutorial H13A
     --> application will start on localhost:1234 or whichever port is set in the run.py file
     --> N.B. the run.py script will import changes from CSV files, this can take some time, especially when running for the first time. Please be patient.
 
+- URL of home page: http://127.0.0.1:1234 or http://localhost:1234
+
+# Section 3: Tests
+- contained in tests/
 
 # Suggested Login credentials:
 
