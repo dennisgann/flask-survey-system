@@ -59,9 +59,12 @@ class Response(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     u_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     s_id = db.Column(db.Integer, db.ForeignKey(Survey.id), nullable=False)
-    responses = db.Column(db.Text, nullable=False)
+    q_id = db.Column(db.Integer, db.ForeignKey(Question.id), nullable=False)
+    text = db.Column(db.Text)
+    num = db.Column(db.Integer)
     user = db.relationship(User)
     survey = db.relationship(Survey)
+    question = db.relationship(Question)
 
     def responsesList(self):
          return ast.literal_eval(self.responses)

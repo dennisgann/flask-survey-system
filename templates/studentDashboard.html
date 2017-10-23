@@ -72,7 +72,7 @@
                     <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
                 </thead>
                 {% for survey in inactive_surveys %}
-                    <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button pure-button-disabled" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a></td></tr>
+                    <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a></td></tr>
                 {% endfor %}
             </table>
             {% else %}

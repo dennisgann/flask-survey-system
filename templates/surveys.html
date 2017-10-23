@@ -38,7 +38,6 @@
 							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
 						</ul>
 					</li>
-					<li class="pure-menu-item"><a href="#" class="pure-menu-link pure-menu-disabled"><i class="fa fa-pie-chart"></i> Results</a></li>
 					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
 				</ul>
 			</div>
@@ -76,7 +75,7 @@
                    <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
                </thead>
                {% for survey in active_surveys %}
-               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button pure-button-disabled" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a>&nbsp;<a class="pure-button" href="surveys/close/{{ survey.id }}"><i class="fa fa-ban"></i> Close</a></td></tr>
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a>&nbsp;<a class="pure-button" href="surveys/close/{{ survey.id }}"><i class="fa fa-ban"></i> Close</a></td></tr>
 
             {% endfor %}
            </table>
@@ -93,7 +92,7 @@
                    <tr><th>Name</th><th>Course</th><th>Created</th><th></th></tr>
                </thead>
                {% for survey in inactive_surveys %}
-               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button pure-button-disabled" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a></td></tr>
+               <tr><td>{{ survey.name }}</td><td>{{ survey.course.name + " " + survey.course.session }}</td><td>{{ survey.create_time.strftime("%d/%m/%Y %H:%M") }}</td><td><a class="pure-button" href="results/{{ survey.id }}"><i class="fa fa-pie-chart"></i> View Results</a></td></tr>
                {% endfor %}
            </table>
            {% else %}

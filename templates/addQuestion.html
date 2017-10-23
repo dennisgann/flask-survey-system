@@ -38,7 +38,6 @@
 							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
 						</ul>
 					</li>
-					<li class="pure-menu-item"><a href="#" class="pure-menu-link pure-menu-disabled"><i class="fa fa-pie-chart"></i> Results</a></li>
 					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
 				</ul>
 			</div>
@@ -63,12 +62,12 @@
                         <span class="pure-form-message-inline">* required</span>
                     </div>
                     <div class="pure-control-group">
-                        <label>Optional</label>
-                        <input type="radio" name="optional" value="1"> Yes &nbsp;&nbsp;&nbsp;
-                        <input type="radio" name="optional" value="0" checked> No
+                        <label>Question type</label>
+                        <input type="radio" name="optional" value="1"> Optional &nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="optional" value="0" checked> Mandatory
                     </div>
                     <div class="pure-control-group">
-                        <label>Question type</label>
+                        <label>Response type</label>
                         <input type="radio" name="type" value="MCQ" onchange="hideText()" checked> Multiple Choice &nbsp;&nbsp;&nbsp;
                         <input type="radio" name="type" value="Text" onchange="hideMCQ()"> Text
                     </div>

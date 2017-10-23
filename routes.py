@@ -69,7 +69,7 @@ def delQuestion(qid):
     if not system.check_login() == 3: return redirect(url_for('index'))
 
     delete = 0
-    delQuestion = Question.query.filter_by(id=qid).first()
+    delQuestion = system.find_question(qid)
 
     if delQuestion:
         if system.update_question(qid, delQuestion.text, 0, delQuestion.type, \
@@ -230,28 +230,35 @@ def survey(sid):
     if Response.query.filter_by(s_id=sid, u_id=session['user_id']).first():
         return render_template("survey.html", survey=survey, success=1)
 
-
     questions = []
     for questionID in survey.questionsList():
         questions.append(system.find_question(questionID))
 
     if request.method == "POST":
+        error = 0
 
-        responses = []
+        #check for required fields
         for question in questions:
             response = request.form.get(str(question.id))
             if question.required and (response == None or response.isspace() or response == ""):
                 return render_template("survey.html", survey=survey, questions=questions, error=1)
 
-            if question.type == 1 and response == None:
-                response = '0'
+        #submit responses
+        for question in questions:
+            response = request.form.get(str(question.id))
 
-            #need to add checking of returned value for MCQ (type == 1) ie. 1 <= val <= noResponses
+            if not response is None and not response.isspace() and response != "":
+                if question.type == 1:
+                    if not system.save_response(sid, session['user_id'], question.id, None, int(response)):
+                        error = 1
+                        break
 
-            responses.append(response)
+                elif question.type == 2:
+                    if not system.save_response(sid, session['user_id'], question.id, response, None):
+                        error = 1
+                        break
 
-
-        if system.save_response(sid, responses):
+        if not error:
             return render_template("survey.html", survey=survey, questions=questions, success=1)
         else:
             return render_template("survey.html", survey=survey, questions=questions, error=2)
@@ -263,7 +270,27 @@ def survey(sid):
 #results page - show survey results
 @app.route("/results/<sid>")
 def results(sid):
-    return "Not implemented yet"
+
+    if not system.check_login(): return redirect(url_for('index'))
+
+    course_ids = [r[0] for r in Enrolment.query.filter_by(u_id=session['user_id']).with_entities(Enrolment.c_id).all()]
+
+    survey = Survey.query.filter_by(id=sid).first()
+
+    if not survey: return render_template("results.html", error=3)
+
+    if survey.c_id not in course_ids:
+        if session['user_type'] != 3:
+            return redirect(url_for('index'))
+
+
+    questions = []
+    for questionID in survey.questionsList():
+        questions.append(system.find_question(questionID))
+
+    responses = Response.query.filter_by(s_id=sid).all()
+
+    return render_template("results.html", survey=survey, questions=questions, responses=responses)
 
 
 #logout - destroys session and redirects to index/login

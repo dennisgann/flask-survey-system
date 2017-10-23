@@ -47,9 +47,12 @@ class SurveySystem():
             return 1
         else:
             return 0
+            
 
-    def save_response(self, sid, responses):
-        newR = Response(s_id=sid, u_id=session['user_id'], responses=str(responses))
+    def save_response(self, sid, uid, qid, text, num):
+        if (text is None and num is None):
+            return 0 #failure
+        newR = Response(s_id=sid, u_id=uid, q_id=qid, text=text, num=num)
         db.session.add(newR)
         db.session.commit()
         return 1 #success
