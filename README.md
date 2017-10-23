@@ -15,10 +15,16 @@ Setup instructions:
     --> N.B. the run.py script will import changes from CSV files, this can take some time, especially when running for the first time. Please be patient.
 
 Suggested Login credentials:
+
 The following credentials will allow you to play around with various user roles.
+
 Start by creating a survey for COMP1000 17s2, since they all have this course in common.
 
+
 ROLE: USERNAME / PASSWORD
+
 Admin: admin / password
+
 Staff: 80 / staff880
+
 Student: 100 / student228
