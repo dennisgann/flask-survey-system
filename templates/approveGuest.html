@@ -1,0 +1,75 @@
+<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>pyChart Survey System :: Approve Guest</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+
+</head>
+<body>
+
+    <div id="main">
+
+
+        <div class="header">
+            <h1>pyChart</h1>
+            <h2>A python/flask Survey System created with <i class="fa fa-pie-chart"></i> in mind.</h2>
+
+            <div class="pure-menu pure-menu-horizontal">
+				<a href="/" class="pure-menu-heading pure-menu-link"><i class="fa fa-home"></i> DASHBOARD</a>
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+						<a class="pure-menu-link"><i class="fa fa-question"></i> Questions</a></a>
+						<ul class="pure-menu-children">
+							<li class="pure-menu-item"><a href="/questions/add" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
+							<li class="pure-menu-item"><a href="/questions" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
+						</ul>
+					</li>
+					<li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+						<a class="pure-menu-link"><i class="fa fa-comments"></i> Surveys</a></a>
+						<ul class="pure-menu-children">
+							<li class="pure-menu-item"><a href="/surveys/create" class="pure-menu-link"><i class="fa fa-plus"></i> Add</a></li>
+							<li class="pure-menu-item"><a href="/surveys" class="pure-menu-link"><i class="fa fa-eye"></i> View</a></li>
+						</ul>
+					</li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link pure-menu-disabled"><i class="fa fa-pie-chart"></i> Results</a></li>
+					<li class="pure-menu-item"><a href="/approve" class="pure-menu-link"><i class="fa fa-question"></i>Requests</a></li>
+					<li class="pure-menu-item"><a href="/logout" class="pure-menu-link"><i class="fa fa-sign-out"></i> Logout</a></li>
+				</ul>
+			</div>
+        </div>
+
+        <div class="content">
+
+
+
+            <h2 class="content-subhead"><i class="fa fa-question"></i> Pending Guest Requests</h2
+            
+            <form class="pure-form pure-form-aligned" method="POST">
+            {% if guest_requests %}
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr><th>Username</th><th>Course</th><th></th></tr>
+                </thead>
+                {% for guest in guest_requests %}
+                <tr><td>{{ guest.username }}</td><td>{{Enrolment.query.filter_by(u_id=guest.id).all().c_id}}<td><input type="checkbox" name="guests" value="{{guest}}"></td></tr>
+ 
+             {% endfor %}
+            </table>
+            <button type="submit"name="submit" value="submit">Submit</button>
+            {% else %}
+            <p>There are no guest waiting to be approved.</p>
+            {% endif %}
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>

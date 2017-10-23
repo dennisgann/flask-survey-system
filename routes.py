@@ -41,8 +41,42 @@ def index():
 
         return render_template("login.html", error=1)
 
-    return render_template("login.html")
+    return render_template("login.html") 
+    
+#guest register route - displays guest registration
+@app.route("/register", methods=["GET", "POST"])
+def register():
 
+    courses = Course.query.all()
+    
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        course = request.form["course"]
+        
+        gid = User.query.order_by(User.id.desc()).first().id
+        
+        system.create_user(gid+1,username, password, 5)
+        system.add_enrolment(gid+1, course)
+            
+        return render_template("registerGuest.html", success=1, courses=courses)
+    
+    return render_template("registerGuest.html", courses=courses)
+            
+#approval route - displays guests awaiting approval
+@app.route("/approve", methods=["GET", "POST"])
+def approve():
+    if not system.check_login() == 3: return redirect(url_for('index'))
+    
+    guest_requests = User.query.filter_by(type=5).all()
+    
+    if request.method == "POST":
+        approved_user = request.form['guest']
+        approved_user.system.update_user_type(4)
+    
+    return render_template("approveGuest.html", guest_requests = guest_requests, Enrolment=Enrolment)
+    
+    
 
 #questions route - displays question pool
 @app.route("/questions")
@@ -271,6 +305,7 @@ def survey(sid):
 @app.route("/results/<sid>")
 def results(sid):
 
+<<<<<<< HEAD
     if not system.check_login(): return redirect(url_for('index'))
 
     course_ids = [r[0] for r in Enrolment.query.filter_by(u_id=session['user_id']).with_entities(Enrolment.c_id).all()]
@@ -291,6 +326,9 @@ def results(sid):
     responses = Response.query.filter_by(s_id=sid).all()
 
     return render_template("results.html", survey=survey, questions=questions, responses=responses)
+=======
+    return 
+>>>>>>> cl
 
 
 #logout - destroys session and redirects to index/login
