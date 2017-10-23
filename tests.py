@@ -8,13 +8,16 @@ from sys_models import SurveySystem
 #(2) Create a survey
 #(3) Enrol a student 
 #(4) Login Authentication
-#(5) ???
+#(5) Create user 
 
 
-#helper functions needed
+#helper functions needed ##Not sure how to write them## Sorry 
 #num_questions() returns no. of questions in database
 #get_question() returns whether a question is present 1 or not present 0 in database 
 #num_surveys() returns no. of surveys in database 
+#num_students() return no. of student accounts
+#num_staffs() returns no. of staff accounts
+#num_admins() returns no. of admin accounts 
 
 # Login Authentication
 class test_Authentication(unittest.Testcase):
@@ -146,7 +149,7 @@ class test_create_survey(unittest.Testcase):
         cur_num_surveys = num_surveys()
         self.assertEqual(num_surveys+1,cur_num_surveys)
 
-    def test_create_survey_fail(self):
+    def test_create_survey_fail(self): #Is this caught by the function create_survey? 
         survey_name = ""
         survey_id = '2'
         survey_questions = ""
@@ -156,15 +159,79 @@ class test_create_survey(unittest.Testcase):
         cur_num_surveys = num_surveys()
         self.assertEqual(num_surveys,cur_num_surveys)
 
+    def tearDown(self):
+        db.create_all()
+        csv_import()
 
-class test_find_question(unittest.Testcase):
-    def test_findQuestionSuccess(self):
-        self.assertTrue(find_question(self, 40))
+#Test cases for create_user()
+class test_create_user(unittest.Testcase):
 
-    def test_findQuestionFail(self):
-        self.assertFail(find_question(self, -1))
+    def setUp(self):
+        db.create_all()
+        csv_import()
 
-#??? Wait we don't enrol anyone do we 
+    def test_create_user_admin_success(self):
+        user_id = 5555555
+        username = 1000
+        password = admin1000
+        num_admins = num_admin()
+        create_user(self, user_id, username, password, 3)
+        cur_num_admins = num_admin()
+        self.assertEqual(num_admins+1,cur_num_admins)
+
+    def test_create_user_admin_fail(self):
+        user_id = ""
+        username = ""
+        password = ""
+        num_admins = num_admin()
+        with self.assertRaises(InvalidInputException):
+            create_user(self, user_id, username, password, 3)
+        cur_num_admins = num_admins()
+        self.assertEqual(num_admins,cur_num_admins)
+
+    def test_create_user_staff_success(self):
+        user_id = 6666666
+        username = 1001
+        password = staff1001
+        num_staffs = num_staff()
+        create_user(self, user_id, username, password, 2) 
+        cur_num_staffs = num_staff()
+        self.assertEqual(num_staffs +1,cur_num_staffs)
+
+    def test_create_user_staff_fail(self):
+        user_id = ""
+        username = ""
+        password = ""
+        num_staffs = num_staff()
+        with self.assertRaises(InvalidInputException):
+            create_user(self, user_id, username, password, 2)
+        cur_num_staffs = num_staff()
+        self.assertEqual(num_staffs,cur_num_staffs)
+
+    def test_create_user_student_success(self):
+        user_id = 777777
+        username = 1002
+        password = student1002
+        num_students = num_students()
+        create_user(self, user_id, username, password, 1) 
+        cur_num_students = num_students()
+        self.assertEqual(num_students+1,cur_num_students)
+
+    def test_create_user_student_fail(self):
+        user_id = ""
+        username = ""
+        password = ""
+        num_students = num_students()
+        with self.assertRaises(InvalidInputException):
+            create_user(self, user_id, username, password, 1)
+        cur_num_students = num_students()
+        self.assertEqual(num_students, cur_num_students)
+
+    def tearDown(self):
+        db.create_all()
+        csv_import()
+
+#??? Wait we don't enrol anyone do we ??? 
 class TestEnrolment(unittest.Testcase):
     def setUp(self):
         db.create_all()
