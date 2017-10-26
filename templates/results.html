@@ -1,0 +1,94 @@
+<!doctype html>
+
+<html>
+{% if error == 3 %}<p style="color: red;">The survey you have requested does not exist. Please check your link is correct.</p>
+{% else %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>pyChart Survey System :: {{ survey.name }}</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/styles.css">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+
+    </script>
+
+</head>
+<body>
+
+    <div id="main">
+
+        <div class="header">
+            <h1>{{ survey.name }}</h1>
+            <h2>{{ survey.course.name + " " + survey.course.session }}</h2>
+        </div>
+        <div class="content">
+
+            <h2 class="content-subhead"><i class="fa fa-pie-chart"></i> Survey Results</h2>
+
+            {% if (survey.state == 2 and session['user_type'] == 3) or survey.state == 0 %}
+
+            <br>
+
+            {% if error == 0 %}<p style="color: red;">The application could not complete your request at this moment. Please try again later.</p>{% endif %}
+
+            <form class="pure-form pure-form-stacked">
+                <fieldset>
+                    {% for question in questions %}
+                    <legend>{{ question.text }} {% if question.required %}<span class="pure-form-message-inline">* required</span>{% endif %}</legend>
+                        <p><i>Total Responses:</i> {{ responses|selectattr("q_id", "equalto", question.id)|list|length }}</p>
+
+                        {% if responses|selectattr("q_id", "equalto", question.id)|list|length > 0 %}
+                            {% if question.type == 1 %}
+                                <div id="{{ question.id }}"></div>
+                                <script> var data{{ question.id }} = [['Option', 'Responses']];</script>
+                                {% for option in question.responsesList() %}
+                                    {% for response in responses if response.q_id == question.id and response.num == loop.index  %}
+                                        {% if loop.last %} <script>data{{ question.id }}.push(["{{ option }}", {{ loop.index }}]);</script> {% endif %}
+                                    {% else %}
+                                        <script>data{{ question.id }}.push(["{{ option }}", 0]);</script>
+                                    {% endfor %}
+                                {% endfor %}
+                                <script>
+                                    google.charts.setOnLoadCallback(drawChart{{ question.id }});
+                                    function drawChart{{ question.id }}() {
+                                        var chartData = google.visualization.arrayToDataTable(data{{ question.id }});
+                                        var chart = new google.visualization.PieChart(document.getElementById({{ question.id }}));
+                                        chart.draw(chartData, {sliceVisibilityThreshold: 0, chartArea:{left:0,top:20,width:'50%',height:'75%'}, legend: {alignment: 'center'}});
+                                    }
+                                </script>
+
+                            {% else %}
+                                <table class="pure-table-striped" style="width:100%;">
+                                    <tbody>
+                                        {% for response in responses if response.q_id == question.id %}
+                                            <tr><td>{{ response.text }}</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <br>
+                            {% endif %}
+                        {% else %}
+                            <br>
+                        {% endif %}
+                    {% endfor %}
+                </fieldset>
+            </form>
+
+           {%else%}
+           <p>Results for this survey are not available yet.</p>
+           {% endif %}
+           <br>
+           <a href="/">Click here to return to your Dashboard.</a>
+
+        </div>
+    </div>
+
+</body>
+{% endif %}
+</html>
