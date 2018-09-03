@@ -1,8 +1,5 @@
 # pyChart Survey System
-Frank Foo, Dennis Gann, Charmaine Leung
-
-COMP1531 17s2 Group Project
-Tutorial H13A
+A pyhton/flask online survey system.
 
 # Section 1: Dependencies
 External Python libraries:
